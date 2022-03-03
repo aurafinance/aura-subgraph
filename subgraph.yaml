@@ -1,0 +1,62 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Booster
+    network: rinkeby
+    source:
+      address: "0x56845E2D3157E1FabEBA37ae40C3BC4A764e6999"
+      abi: Booster
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - ArbitratorUpdated
+        - Deposited
+        - FactoriesUpdated
+        - FeeInfoUpdated
+        - FeeManagerUpdated
+        - FeesUpdated
+        - OwnerUpdated
+        - PoolAdded
+        - PoolManagerUpdated
+        - PoolShutdown
+        - RewardContractsUpdated
+        - TreasuryUpdated
+        - VoteDelegateUpdated
+        - Withdrawn
+      abis:
+        - name: Booster
+          file: ./abis/Booster.json
+      eventHandlers:
+        - event: ArbitratorUpdated(address)
+          handler: handleArbitratorUpdated
+        - event: Deposited(indexed address,indexed uint256,uint256)
+          handler: handleDeposited
+        - event: FactoriesUpdated(address,address,address)
+          handler: handleFactoriesUpdated
+        - event: FeeInfoUpdated(address,address,address)
+          handler: handleFeeInfoUpdated
+        - event: FeeManagerUpdated(address)
+          handler: handleFeeManagerUpdated
+        - event: FeesUpdated(uint256,uint256,uint256,uint256)
+          handler: handleFeesUpdated
+        - event: OwnerUpdated(address)
+          handler: handleOwnerUpdated
+        - event: PoolAdded(address,address,address,address,address,uint256)
+          handler: handlePoolAdded
+        - event: PoolManagerUpdated(address)
+          handler: handlePoolManagerUpdated
+        - event: PoolShutdown(uint256)
+          handler: handlePoolShutdown
+        - event: RewardContractsUpdated(address,address)
+          handler: handleRewardContractsUpdated
+        - event: TreasuryUpdated(address)
+          handler: handleTreasuryUpdated
+        - event: VoteDelegateUpdated(address)
+          handler: handleVoteDelegateUpdated
+        - event: Withdrawn(indexed address,indexed uint256,uint256)
+          handler: handleWithdrawn
+      file: ./src/mapping.ts
