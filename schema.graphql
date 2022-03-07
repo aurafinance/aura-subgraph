@@ -1,5 +1,7 @@
 type Pool @entity {
   id: ID!
+  token: Bytes!
   lpToken: Bytes!
+  depositted: BigDecimal!
   staked: BigDecimal!
 }
