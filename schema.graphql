@@ -4,4 +4,18 @@ type Pool @entity {
   lpToken: Bytes!
   depositted: BigDecimal!
   staked: BigDecimal!
+  accounts: [AccountPool!]! @derivedFrom(field: "pool")
+}
+
+type Account @entity {
+  id: ID!
+  pools: [AccountPool!]! @derivedFrom(field: "account")
+}
+
+type AccountPool @entity {
+  id: ID!
+  account: Account!
+  pool: Pool!
+  depositted: BigDecimal!
+  staked: BigDecimal!
 }

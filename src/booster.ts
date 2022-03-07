@@ -18,17 +18,12 @@ import {
 } from "../generated/Booster/Booster"
 import { Pool } from "../generated/schema"
 import { BaseRewardPool, RewardFactory } from "../generated/templates"
-import { EIGHTEEN_DECIMALS } from "./lib"
+import { adjustAccount } from "./accounts"
+import { EIGHTEEN_DECIMALS, ZERO } from "./lib"
 
 let ZERO_ADDRESS = Address.fromString('0x0000000000000000000000000000000000000000')
 
 export function handleArbitratorUpdated(event: ArbitratorUpdated): void {
-}
-
-export function handleDeposited(event: Deposited): void {
-  let pool = Pool.load(event.params.poolid.toString())!
-  pool.depositted = pool.depositted.plus(event.params.amount.divDecimal(EIGHTEEN_DECIMALS))
-  pool.save()
 }
 
 export function handleFactoriesUpdated(event: FactoriesUpdated): void {
@@ -92,8 +87,24 @@ export function handleTreasuryUpdated(event: TreasuryUpdated): void {}
 
 export function handleVoteDelegateUpdated(event: VoteDelegateUpdated): void {}
 
-export function handleWithdrawn(event: Withdrawn): void {
+export function handleDeposited(event: Deposited): void {
+  let amount = event.params.amount.divDecimal(EIGHTEEN_DECIMALS)
+
   let pool = Pool.load(event.params.poolid.toString())!
-  pool.depositted = pool.depositted.minus(event.params.amount.divDecimal(EIGHTEEN_DECIMALS))
+  pool.depositted = pool.depositted.plus(amount)
+
+  adjustAccount(event.params.poolid.toString(), event.params.user, ZERO.toBigDecimal(), amount)
+
+  pool.save()
+}
+
+export function handleWithdrawn(event: Withdrawn): void {
+  let amount = event.params.amount.divDecimal(EIGHTEEN_DECIMALS)
+
+  let pool = Pool.load(event.params.poolid.toString())!
+  pool.depositted = pool.depositted.minus(amount)
+
+  adjustAccount(event.params.poolid.toString(), event.params.user, ZERO.toBigDecimal(), amount.neg())
+
   pool.save()
 }
