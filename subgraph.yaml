@@ -8,6 +8,7 @@ dataSources:
     source:
       address: "0x0DACcE714D0dDD2f78f406752f5aBbAAd1D20062"
       abi: Booster
+      startBlock: 10269503
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5

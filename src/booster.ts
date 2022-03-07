@@ -1,4 +1,4 @@
-import { Address, BigInt } from "@graphprotocol/graph-ts"
+import { Address, BigInt, DataSourceContext } from "@graphprotocol/graph-ts"
 import {
   Booster,
   ArbitratorUpdated,
@@ -17,10 +17,10 @@ import {
   Withdrawn
 } from "../generated/Booster/Booster"
 import { Pool } from "../generated/schema"
-import { RewardFactory } from "../generated/templates"
+import { BaseRewardPool, RewardFactory } from "../generated/templates"
 import { EIGHTEEN_DECIMALS } from "./lib"
 
-let ZERO_ADDRESS = Address.fromI32(0)
+let ZERO_ADDRESS = Address.fromString('0x0000000000000000000000000000000000000000')
 
 export function handleArbitratorUpdated(event: ArbitratorUpdated): void {
 }
@@ -62,7 +62,31 @@ export function handlePoolShutdown(event: PoolShutdown): void {}
 
 export function handleRewardContractsUpdated(
   event: RewardContractsUpdated
-): void {}
+): void {
+  let lockRewardsPool = new Pool('cvxCrv')
+  lockRewardsPool.lpToken = ZERO_ADDRESS
+  lockRewardsPool.token = ZERO_ADDRESS
+  lockRewardsPool.depositted = BigInt.fromI32(0).toBigDecimal()
+  lockRewardsPool.staked = BigInt.fromI32(0).toBigDecimal()
+
+  let context = new DataSourceContext()
+  context.setString('pid', 'cvxCrv')
+  BaseRewardPool.createWithContext(event.params.lockRewards, context)
+
+  lockRewardsPool.save()
+
+  let stakerRewardsPool = new Pool('cvx')
+  stakerRewardsPool.lpToken = ZERO_ADDRESS
+  stakerRewardsPool.token = ZERO_ADDRESS
+  stakerRewardsPool.depositted = BigInt.fromI32(0).toBigDecimal()
+  stakerRewardsPool.staked = BigInt.fromI32(0).toBigDecimal()
+
+  let context2 = new DataSourceContext()
+  context2.setString('pid', 'cvx')
+  BaseRewardPool.createWithContext(event.params.stakerRewards, context2)
+
+  stakerRewardsPool.save()
+}
 
 export function handleTreasuryUpdated(event: TreasuryUpdated): void {}
 
