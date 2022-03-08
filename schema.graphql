@@ -5,6 +5,8 @@ type Pool @entity {
   depositted: BigDecimal!
   staked: BigDecimal!
   accounts: [AccountPool!]! @derivedFrom(field: "pool")
+
+  rewardPool: Bytes
 }
 
 type Account @entity {

@@ -63,6 +63,7 @@ export function handleRewardContractsUpdated(
   lockRewardsPool.token = ZERO_ADDRESS
   lockRewardsPool.depositted = BigInt.fromI32(0).toBigDecimal()
   lockRewardsPool.staked = BigInt.fromI32(0).toBigDecimal()
+  lockRewardsPool.rewardPool = event.params.lockRewards
 
   let context = new DataSourceContext()
   context.setString('pid', 'cvxCrv')
@@ -75,6 +76,7 @@ export function handleRewardContractsUpdated(
   stakerRewardsPool.token = ZERO_ADDRESS
   stakerRewardsPool.depositted = BigInt.fromI32(0).toBigDecimal()
   stakerRewardsPool.staked = BigInt.fromI32(0).toBigDecimal()
+  stakerRewardsPool.rewardPool = event.params.stakerRewards
 
   let context2 = new DataSourceContext()
   context2.setString('pid', 'cvx')

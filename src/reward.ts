@@ -10,6 +10,12 @@ export function handleRewardPoolCreated(event: RewardPoolCreated): void {
   let context = new DataSourceContext()
   context.setString('pid', event.params.pid.toString())
   BaseRewardPool.createWithContext(event.params.rewardPool, context)
+
+  let pool = Pool.load(event.params.pid.toString())
+  if (pool) {
+    pool.rewardPool = event.params.rewardPool
+    pool.save()
+  }
 }
 
 export function handleDeposit(event: Staked): void {
@@ -20,6 +26,10 @@ export function handleDeposit(event: Staked): void {
 
   let pool = Pool.load(pid)!
   pool.staked = pool.staked.plus(amount)
+
+  if (!pool.rewardPool) {
+    pool.rewardPool = event.address
+  }
 
   adjustAccount(pid, event.params.user, amount, ZERO.toBigDecimal())
 
@@ -34,6 +44,10 @@ export function handleWithdrawal(event: Withdrawn): void {
 
   let pool = Pool.load(pid)!
   pool.staked = pool.staked.minus(amount)
+
+  if (!pool.rewardPool) {
+    pool.rewardPool = event.address
+  }
 
   adjustAccount(pid, event.params.user, amount.neg(), ZERO.toBigDecimal())
 
