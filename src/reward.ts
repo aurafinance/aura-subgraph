@@ -19,7 +19,7 @@ export function handleDeposit(event: Staked): void {
   let amount = event.params.amount.divDecimal(EIGHTEEN_DECIMALS)
 
   let pool = Pool.load(pid)!
-  pool.depositted = pool.depositted.minus(amount)
+  pool.staked = pool.staked.plus(amount)
 
   adjustAccount(pid, event.params.user, amount, ZERO.toBigDecimal())
 
@@ -33,7 +33,7 @@ export function handleWithdrawal(event: Withdrawn): void {
   let amount = event.params.amount.divDecimal(EIGHTEEN_DECIMALS)
 
   let pool = Pool.load(pid)!
-  pool.depositted = pool.depositted.minus(amount)
+  pool.staked = pool.staked.minus(amount)
 
   adjustAccount(pid, event.params.user, amount.neg(), ZERO.toBigDecimal())
 
