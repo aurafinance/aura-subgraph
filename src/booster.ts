@@ -47,6 +47,8 @@ export function handlePoolAdded(event: PoolAdded): void {
   pool.token = event.params.token;
   pool.depositted = BigInt.fromI32(0).toBigDecimal()
   pool.staked = BigInt.fromI32(0).toBigDecimal()
+  pool.rewardsLastUpdated = 0
+  pool.rewardPerTokenStored = ZERO
   
   pool.save()
 }
@@ -64,6 +66,8 @@ export function handleRewardContractsUpdated(
   lockRewardsPool.depositted = BigInt.fromI32(0).toBigDecimal()
   lockRewardsPool.staked = BigInt.fromI32(0).toBigDecimal()
   lockRewardsPool.rewardPool = event.params.lockRewards
+  lockRewardsPool.rewardsLastUpdated = 0
+  lockRewardsPool.rewardPerTokenStored = ZERO
 
   let context = new DataSourceContext()
   context.setString('pid', 'cvxCrv')
@@ -77,6 +81,8 @@ export function handleRewardContractsUpdated(
   stakerRewardsPool.depositted = BigInt.fromI32(0).toBigDecimal()
   stakerRewardsPool.staked = BigInt.fromI32(0).toBigDecimal()
   stakerRewardsPool.rewardPool = event.params.stakerRewards
+  stakerRewardsPool.rewardsLastUpdated = 0
+  stakerRewardsPool.rewardPerTokenStored = ZERO
 
   let context2 = new DataSourceContext()
   context2.setString('pid', 'cvx')

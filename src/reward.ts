@@ -1,10 +1,16 @@
-import { DataSourceContext, dataSource } from "@graphprotocol/graph-ts"
+import { DataSourceContext, dataSource, Address } from "@graphprotocol/graph-ts"
 import { RewardPoolCreated } from "../generated/templates/RewardFactory/RewardFactory"
-import { Staked, Withdrawn } from "../generated/templates/BaseRewardPool/BaseRewardPool"
+import { BaseRewardPool as BaseRewardPoolContrace, Staked, Withdrawn } from "../generated/templates/BaseRewardPool/BaseRewardPool"
 import { Pool } from "../generated/schema"
 import { BaseRewardPool } from "../generated/templates"
 import { EIGHTEEN_DECIMALS, ZERO } from "./lib"
 import { adjustAccount } from "./accounts"
+
+function updateRewards(pool: Pool, rewardPoolAddress: Address): void {
+  let poolContract = BaseRewardPoolContrace.bind(rewardPoolAddress)
+  pool.rewardsLastUpdated = poolContract.lastUpdateTime().toI32()
+  pool.rewardPerTokenStored = poolContract.rewardPerTokenStored()
+}
 
 export function handleRewardPoolCreated(event: RewardPoolCreated): void {
   let context = new DataSourceContext()
@@ -14,6 +20,7 @@ export function handleRewardPoolCreated(event: RewardPoolCreated): void {
   let pool = Pool.load(event.params.pid.toString())
   if (pool) {
     pool.rewardPool = event.params.rewardPool
+    updateRewards(pool, event.params.rewardPool)
     pool.save()
   }
 }
@@ -26,6 +33,7 @@ export function handleDeposit(event: Staked): void {
 
   let pool = Pool.load(pid)!
   pool.staked = pool.staked.plus(amount)
+  updateRewards(pool, event.address)
 
   if (!pool.rewardPool) {
     pool.rewardPool = event.address
@@ -44,6 +52,7 @@ export function handleWithdrawal(event: Withdrawn): void {
 
   let pool = Pool.load(pid)!
   pool.staked = pool.staked.minus(amount)
+  updateRewards(pool, event.address)
 
   if (!pool.rewardPool) {
     pool.rewardPool = event.address
