@@ -39,7 +39,7 @@ export function handleDeposit(event: Staked): void {
     pool.rewardPool = event.address
   }
 
-  adjustAccount(pid, event.params.user, amount, ZERO.toBigDecimal())
+  adjustAccount(pid, event.params.user, amount, ZERO.toBigDecimal(), event.address, event.block.timestamp.toI32())
 
   pool.save()
 }
@@ -58,7 +58,7 @@ export function handleWithdrawal(event: Withdrawn): void {
     pool.rewardPool = event.address
   }
 
-  adjustAccount(pid, event.params.user, amount.neg(), ZERO.toBigDecimal())
+  adjustAccount(pid, event.params.user, amount.neg(), ZERO.toBigDecimal(), event.address, event.block.timestamp.toI32())
 
   pool.save()
 }

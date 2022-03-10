@@ -22,4 +22,7 @@ type AccountPool @entity {
   pool: Pool!
   depositted: BigDecimal!
   staked: BigDecimal!
+  userRewardPerTokenPaid: BigInt!
+  rewards: BigInt!
+  lastUpdatedTimestamp: Int!
 }
