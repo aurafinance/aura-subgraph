@@ -18,8 +18,11 @@ import {
 } from "../generated/Booster/Booster"
 import { Pool } from "../generated/schema"
 import { BaseRewardPool, RewardFactory } from "../generated/templates"
+import { BaseRewardPool as BaseRewardPoolContract } from "../generated/templates/BaseRewardPool/BaseRewardPool"
+import { CvxStakingProxy } from "../generated/Booster/CvxStakingProxy"
 import { adjustAccount } from "./accounts"
 import { EIGHTEEN_DECIMALS, ZERO } from "./lib"
+import { getToken } from "./token"
 
 let ZERO_ADDRESS = Address.fromString('0x0000000000000000000000000000000000000000')
 
@@ -43,8 +46,8 @@ export function handleOwnerUpdated(event: OwnerUpdated): void {}
 export function handlePoolAdded(event: PoolAdded): void {
   let pool = new Pool(event.params.pid.toString())
 
-  pool.lpToken = event.params.lpToken;
-  pool.token = event.params.token;
+  pool.lpToken = getToken(event.params.lpToken).id;
+  pool.token = getToken(event.params.token).id;
   pool.depositted = BigInt.fromI32(0).toBigDecimal()
   pool.staked = BigInt.fromI32(0).toBigDecimal()
   pool.rewardsLastUpdated = 0
@@ -60,9 +63,9 @@ export function handlePoolShutdown(event: PoolShutdown): void {}
 export function handleRewardContractsUpdated(
   event: RewardContractsUpdated
 ): void {
+  let cvxCrvRewardContract = BaseRewardPoolContract.bind(event.params.lockRewards)
   let lockRewardsPool = new Pool('cvxCrv')
-  lockRewardsPool.lpToken = ZERO_ADDRESS
-  lockRewardsPool.token = ZERO_ADDRESS
+  lockRewardsPool.token = getToken(cvxCrvRewardContract.stakingToken()).id
   lockRewardsPool.depositted = BigInt.fromI32(0).toBigDecimal()
   lockRewardsPool.staked = BigInt.fromI32(0).toBigDecimal()
   lockRewardsPool.rewardPool = event.params.lockRewards
@@ -75,9 +78,9 @@ export function handleRewardContractsUpdated(
 
   lockRewardsPool.save()
 
+  let cvxRewardContract = CvxStakingProxy.bind(event.params.stakerRewards)
   let stakerRewardsPool = new Pool('cvx')
-  stakerRewardsPool.lpToken = ZERO_ADDRESS
-  stakerRewardsPool.token = ZERO_ADDRESS
+  stakerRewardsPool.token = getToken(cvxRewardContract.cvx()).id
   stakerRewardsPool.depositted = BigInt.fromI32(0).toBigDecimal()
   stakerRewardsPool.staked = BigInt.fromI32(0).toBigDecimal()
   stakerRewardsPool.rewardPool = event.params.stakerRewards

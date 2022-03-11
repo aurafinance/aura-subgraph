@@ -1,7 +1,7 @@
 type Pool @entity {
   id: ID!
-  token: Bytes!
-  lpToken: Bytes!
+  token: Token
+  lpToken: Token
   depositted: BigDecimal!
   staked: BigDecimal!
   accounts: [AccountPool!]! @derivedFrom(field: "pool")
@@ -25,4 +25,10 @@ type AccountPool @entity {
   userRewardPerTokenPaid: BigInt!
   rewards: BigInt!
   lastUpdatedTimestamp: Int!
+}
+
+type Token @entity {
+  id: ID!
+  symbol: String!
+  name: String!
 }

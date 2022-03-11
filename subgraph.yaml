@@ -31,6 +31,12 @@ dataSources:
       abis:
         - name: Booster
           file: ./abis/Booster.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: BaseRewardPool
+          file: ./abis/BaseRewardPool.json
+        - name: CvxStakingProxy
+          file: ./abis/CvxStakingProxy.json
       eventHandlers:
         - event: ArbitratorUpdated(address)
           handler: handleArbitratorUpdated
