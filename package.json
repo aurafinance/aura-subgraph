@@ -2,15 +2,18 @@
   "name": "aura-testnet",
   "license": "UNLICENSED",
   "scripts": {
+    "prepare": "node ./prepare.js",
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ oxbart/aura-staging",
-    "create-local": "graph create --node http://localhost:8020/ oxbart/aura-testnet",
-    "remove-local": "graph remove --node http://localhost:8020/ oxbart/aura-testnet",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 oxbart/aura-testnet"
+    "auth": "graph auth --product hosted-service",
+    "deploy:staging": "graph deploy --product hosted-service 0xbutterfield/aura-staging",
+    "create-local": "graph create --node http://localhost:8020/ oxbutterfield/aura-testnet",
+    "remove-local": "graph remove --node http://localhost:8020/ oxbutterfield/aura-testnet",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 oxbutterfield/aura-testnet"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "^0.27.0",
-    "@graphprotocol/graph-ts": "^0.25.0"
+    "@graphprotocol/graph-cli": "^0.28.0",
+    "@graphprotocol/graph-ts": "^0.26.0",
+    "mustache": "^4.2.0"
   }
 }
