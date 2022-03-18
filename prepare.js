@@ -4,7 +4,7 @@ const Mustache = require('mustache')
 const deployments = require('./deployments.json')
 const fs = require('fs')
 
-const networkName = process.argv.pop()
+const [networkName] = process.argv.slice(2)
 
 if (!deployments[networkName]) {
     throw new Error(`Network ${networkName} not found`)
