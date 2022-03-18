@@ -48,7 +48,7 @@ export function handlePoolAdded(event: PoolAdded): void {
 
   pool.lpToken = getToken(event.params.lpToken).id;
   pool.token = getToken(event.params.token).id;
-  pool.depositted = BigInt.fromI32(0).toBigDecimal()
+  pool.deposited = BigInt.fromI32(0).toBigDecimal()
   pool.staked = BigInt.fromI32(0).toBigDecimal()
   pool.rewardsLastUpdated = 0
   pool.rewardPerTokenStored = ZERO
@@ -66,7 +66,7 @@ export function handleRewardContractsUpdated(
   let cvxCrvRewardContract = BaseRewardPoolContract.bind(event.params.lockRewards)
   let lockRewardsPool = new Pool('cvxCrv')
   lockRewardsPool.token = getToken(cvxCrvRewardContract.stakingToken()).id
-  lockRewardsPool.depositted = BigInt.fromI32(0).toBigDecimal()
+  lockRewardsPool.deposited = BigInt.fromI32(0).toBigDecimal()
   lockRewardsPool.staked = BigInt.fromI32(0).toBigDecimal()
   lockRewardsPool.rewardPool = event.params.lockRewards
   lockRewardsPool.rewardsLastUpdated = 0
@@ -81,7 +81,7 @@ export function handleRewardContractsUpdated(
   let cvxRewardContract = CvxStakingProxy.bind(event.params.stakerRewards)
   let stakerRewardsPool = new Pool('cvx')
   stakerRewardsPool.token = getToken(cvxRewardContract.cvx()).id
-  stakerRewardsPool.depositted = BigInt.fromI32(0).toBigDecimal()
+  stakerRewardsPool.deposited = BigInt.fromI32(0).toBigDecimal()
   stakerRewardsPool.staked = BigInt.fromI32(0).toBigDecimal()
   stakerRewardsPool.rewardPool = event.params.stakerRewards
   stakerRewardsPool.rewardsLastUpdated = 0
@@ -102,7 +102,7 @@ export function handleDeposited(event: Deposited): void {
   let amount = event.params.amount.divDecimal(EIGHTEEN_DECIMALS)
 
   let pool = Pool.load(event.params.poolid.toString())!
-  pool.depositted = pool.depositted.plus(amount)
+  pool.deposited = pool.deposited.plus(amount)
 
   adjustAccount(event.params.poolid.toString(), event.params.user, ZERO.toBigDecimal(), amount)
 
@@ -113,7 +113,7 @@ export function handleWithdrawn(event: Withdrawn): void {
   let amount = event.params.amount.divDecimal(EIGHTEEN_DECIMALS)
 
   let pool = Pool.load(event.params.poolid.toString())!
-  pool.depositted = pool.depositted.minus(amount)
+  pool.deposited = pool.deposited.minus(amount)
 
   adjustAccount(event.params.poolid.toString(), event.params.user, ZERO.toBigDecimal(), amount.neg())
 

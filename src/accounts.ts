@@ -7,7 +7,7 @@ export function adjustAccount(
   pool: string,
   accountAddress: Address,
   staked: BigDecimal,
-  depositted: BigDecimal,
+  deposited: BigDecimal,
   rewardContractAddress: Address | null = null,
   timestamp: u32 = 0
 ): void {
@@ -23,14 +23,14 @@ export function adjustAccount(
     accountPool = new AccountPool(accountPoolId)
     accountPool.account = accountAddress.toHex()
     accountPool.pool = pool
-    accountPool.depositted = ZERO.toBigDecimal()
+    accountPool.deposited = ZERO.toBigDecimal()
     accountPool.staked = ZERO.toBigDecimal()
     accountPool.userRewardPerTokenPaid = ZERO
     accountPool.rewards = ZERO
     accountPool.lastUpdatedTimestamp = 0
   }
 
-  accountPool.depositted = accountPool.depositted.plus(depositted)
+  accountPool.deposited = accountPool.deposited.plus(deposited)
   accountPool.staked = accountPool.staked.plus(staked)
 
   if (rewardContractAddress) {
