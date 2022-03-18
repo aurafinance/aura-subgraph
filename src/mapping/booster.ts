@@ -15,14 +15,14 @@ import {
   TreasuryUpdated,
   VoteDelegateUpdated,
   Withdrawn,
-} from '../generated/Booster/Booster'
-import { Pool } from '../generated/schema'
-import { BaseRewardPool, RewardFactory } from '../generated/templates'
-import { BaseRewardPool as BaseRewardPoolContract } from '../generated/templates/BaseRewardPool/BaseRewardPool'
-import { CvxStakingProxy } from '../generated/Booster/CvxStakingProxy'
-import { adjustAccount } from './accounts'
-import { SCALE, ZERO } from './lib'
-import { getToken } from './token'
+} from '../../generated/Booster/Booster'
+import { Pool } from '../../generated/schema'
+import { BaseRewardPool, RewardFactory } from '../../generated/templates'
+import { BaseRewardPool as BaseRewardPoolContract } from '../../generated/templates/BaseRewardPool/BaseRewardPool'
+import { CvxStakingProxy } from '../../generated/Booster/CvxStakingProxy'
+import { adjustAccount } from '../accounts'
+import { SCALE, ZERO } from '../lib'
+import { getToken } from '../token'
 
 let ZERO_ADDRESS = Address.fromString(
   '0x0000000000000000000000000000000000000000',

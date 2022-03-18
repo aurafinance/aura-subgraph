@@ -66,7 +66,7 @@ dataSources:
           handler: handleVoteDelegateUpdated
         - event: Withdrawn(indexed address,indexed uint256,uint256)
           handler: handleWithdrawn
-      file: ./src/booster.ts
+      file: ./src/mapping/booster.ts
 
 templates:
   - kind: ethereum
@@ -86,7 +86,7 @@ templates:
       eventHandlers:
         - event: RewardPoolCreated(address,uint256,address)
           handler: handleRewardPoolCreated
-      file: ./src/reward.ts
+      file: ./src/mapping/reward.ts
   - kind: ethereum
     name: BaseRewardPool
     network: '{{network}}'
@@ -106,4 +106,4 @@ templates:
           handler: handleDeposit
         - event: Withdrawn(indexed address,uint256)
           handler: handleWithdrawal
-      file: ./src/reward.ts
+      file: ./src/mapping/reward.ts

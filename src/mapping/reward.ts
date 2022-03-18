@@ -1,14 +1,14 @@
 import { DataSourceContext, dataSource, Address } from '@graphprotocol/graph-ts'
-import { RewardPoolCreated } from '../generated/templates/RewardFactory/RewardFactory'
+import { RewardPoolCreated } from '../../generated/templates/RewardFactory/RewardFactory'
 import {
   BaseRewardPool as BaseRewardPoolContrace,
   Staked,
   Withdrawn,
-} from '../generated/templates/BaseRewardPool/BaseRewardPool'
-import { Pool } from '../generated/schema'
-import { BaseRewardPool } from '../generated/templates'
-import { SCALE, ZERO } from './lib'
-import { adjustAccount } from './accounts'
+} from '../../generated/templates/BaseRewardPool/BaseRewardPool'
+import { Pool } from '../../generated/schema'
+import { BaseRewardPool } from '../../generated/templates'
+import { SCALE, ZERO } from '../lib'
+import { adjustAccount } from '../accounts'
 
 function updateRewards(pool: Pool, rewardPoolAddress: Address): void {
   let poolContract = BaseRewardPoolContrace.bind(rewardPoolAddress)

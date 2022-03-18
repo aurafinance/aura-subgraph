@@ -12,14 +12,14 @@ export function adjustAccount(
   timestamp: u32 = 0,
 ): void {
   let account = Account.load(accountAddress.toHex())
-  if (!account) {
+  if (account == null) {
     account = new Account(accountAddress.toHex())
     account.save()
   }
 
   let accountPoolId = accountAddress.toHex() + '-' + pool
   let accountPool = AccountPool.load(accountPoolId)
-  if (!accountPool) {
+  if (accountPool == null) {
     accountPool = new AccountPool(accountPoolId)
     accountPool.account = accountAddress.toHex()
     accountPool.pool = pool
