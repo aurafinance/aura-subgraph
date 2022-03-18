@@ -21,7 +21,7 @@ import { BaseRewardPool, RewardFactory } from '../generated/templates'
 import { BaseRewardPool as BaseRewardPoolContract } from '../generated/templates/BaseRewardPool/BaseRewardPool'
 import { CvxStakingProxy } from '../generated/Booster/CvxStakingProxy'
 import { adjustAccount } from './accounts'
-import { EIGHTEEN_DECIMALS, ZERO } from './lib'
+import { SCALE, ZERO } from './lib'
 import { getToken } from './token'
 
 let ZERO_ADDRESS = Address.fromString(
@@ -102,7 +102,7 @@ export function handleTreasuryUpdated(event: TreasuryUpdated): void {}
 export function handleVoteDelegateUpdated(event: VoteDelegateUpdated): void {}
 
 export function handleDeposited(event: Deposited): void {
-  let amount = event.params.amount.divDecimal(EIGHTEEN_DECIMALS)
+  let amount = event.params.amount.divDecimal(SCALE)
 
   let pool = Pool.load(event.params.poolid.toString())!
   pool.deposited = pool.deposited.plus(amount)
@@ -118,7 +118,7 @@ export function handleDeposited(event: Deposited): void {
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
-  let amount = event.params.amount.divDecimal(EIGHTEEN_DECIMALS)
+  let amount = event.params.amount.divDecimal(SCALE)
 
   let pool = Pool.load(event.params.poolid.toString())!
   pool.deposited = pool.deposited.minus(amount)

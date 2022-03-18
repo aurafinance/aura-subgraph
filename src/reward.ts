@@ -7,7 +7,7 @@ import {
 } from '../generated/templates/BaseRewardPool/BaseRewardPool'
 import { Pool } from '../generated/schema'
 import { BaseRewardPool } from '../generated/templates'
-import { EIGHTEEN_DECIMALS, ZERO } from './lib'
+import { SCALE, ZERO } from './lib'
 import { adjustAccount } from './accounts'
 
 function updateRewards(pool: Pool, rewardPoolAddress: Address): void {
@@ -33,7 +33,7 @@ export function handleDeposit(event: Staked): void {
   let context = dataSource.context()
   let pid = context.getString('pid')
 
-  let amount = event.params.amount.divDecimal(EIGHTEEN_DECIMALS)
+  let amount = event.params.amount.divDecimal(SCALE)
 
   let pool = Pool.load(pid)!
   pool.staked = pool.staked.plus(amount)
@@ -59,7 +59,7 @@ export function handleWithdrawal(event: Withdrawn): void {
   let context = dataSource.context()
   let pid = context.getString('pid')
 
-  let amount = event.params.amount.divDecimal(EIGHTEEN_DECIMALS)
+  let amount = event.params.amount.divDecimal(SCALE)
 
   let pool = Pool.load(pid)!
   pool.staked = pool.staked.minus(amount)
