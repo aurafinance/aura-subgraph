@@ -1,0 +1,23 @@
+{
+  "mainnet": {
+    "network": "mainnet",
+    "Booster": {
+      "address": "NOT_DEPLOYED",
+      "startBlock": 9999999999
+    }
+  },
+  "rinkeby": {
+    "network": "rinkeby",
+    "Booster": {
+      "address": "0x0DACcE714D0dDD2f78f406752f5aBbAAd1D20062",
+      "startBlock": 10269503
+    }
+  },
+  "kovan": {
+    "network": "kovan",
+    "Booster": {
+      "address": "NOT_DEPLOYED",
+      "startBlock": 9999999999
+    }
+  }
+}
