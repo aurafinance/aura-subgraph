@@ -16,7 +16,7 @@ jobs:
       - name: Install
         run: yarn --frozen-lockfile
       - name: Prepare
-        run: yarn prepare rinkeby
+        run: yarn prepare:rinkeby
       - name: Codegen
         run: yarn codegen
       - name: Build

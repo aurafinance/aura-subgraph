@@ -2,7 +2,9 @@
   "name": "aura-testnet",
   "license": "UNLICENSED",
   "scripts": {
-    "prepare": "node ./prepare.js",
+    "prepare:rinkeby": "node ./prepare.js rinkeby",
+    "prepare:kovan": "node ./prepare.js kovan",
+    "prepare:mainnet": "node ./prepare.js mainnet",
     "codegen": "graph codegen",
     "build": "graph build",
     "auth": "graph auth --product hosted-service",
