@@ -8,7 +8,7 @@ dataSources:
     source:
       address: '{{Booster.address}}'
       abi: Booster
-      startBlock: '{{Booster.startBlock}}'
+      startBlock: {{Booster.startBlock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
