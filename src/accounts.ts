@@ -1,7 +1,7 @@
-import { Address, BigDecimal } from "@graphprotocol/graph-ts";
-import { Account, AccountPool } from "../generated/schema";
-import { BaseRewardPool } from "../generated/templates/BaseRewardPool/BaseRewardPool";
-import { ZERO } from "./lib";
+import { Address, BigDecimal } from '@graphprotocol/graph-ts'
+import { Account, AccountPool } from '../generated/schema'
+import { BaseRewardPool } from '../generated/templates/BaseRewardPool/BaseRewardPool'
+import { ZERO } from './lib'
 
 export function adjustAccount(
   pool: string,
@@ -9,7 +9,7 @@ export function adjustAccount(
   staked: BigDecimal,
   deposited: BigDecimal,
   rewardContractAddress: Address | null = null,
-  timestamp: u32 = 0
+  timestamp: u32 = 0,
 ): void {
   let account = Account.load(accountAddress.toHex())
   if (!account) {
@@ -35,7 +35,8 @@ export function adjustAccount(
 
   if (rewardContractAddress) {
     let poolContract = BaseRewardPool.bind(rewardContractAddress)
-    accountPool.userRewardPerTokenPaid = poolContract.userRewardPerTokenPaid(accountAddress)
+    accountPool.userRewardPerTokenPaid =
+      poolContract.userRewardPerTokenPaid(accountAddress)
     accountPool.rewards = poolContract.rewards(accountAddress)
     accountPool.lastUpdatedTimestamp = timestamp
   }

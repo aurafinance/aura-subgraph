@@ -1,6 +1,6 @@
-import { Address } from "@graphprotocol/graph-ts";
-import { Token } from "../generated/schema";
-import { ERC20 } from "../generated/Booster/ERC20"
+import { Address } from '@graphprotocol/graph-ts'
+import { Token } from '../generated/schema'
+import { ERC20 } from '../generated/Booster/ERC20'
 
 export function getToken(address: Address): Token {
   let token = Token.load(address.toHex())

@@ -1,4 +1,4 @@
-import { Address, BigInt, DataSourceContext } from "@graphprotocol/graph-ts"
+import { Address, BigInt, DataSourceContext } from '@graphprotocol/graph-ts'
 import {
   Booster,
   ArbitratorUpdated,
@@ -14,20 +14,21 @@ import {
   RewardContractsUpdated,
   TreasuryUpdated,
   VoteDelegateUpdated,
-  Withdrawn
-} from "../generated/Booster/Booster"
-import { Pool } from "../generated/schema"
-import { BaseRewardPool, RewardFactory } from "../generated/templates"
-import { BaseRewardPool as BaseRewardPoolContract } from "../generated/templates/BaseRewardPool/BaseRewardPool"
-import { CvxStakingProxy } from "../generated/Booster/CvxStakingProxy"
-import { adjustAccount } from "./accounts"
-import { EIGHTEEN_DECIMALS, ZERO } from "./lib"
-import { getToken } from "./token"
+  Withdrawn,
+} from '../generated/Booster/Booster'
+import { Pool } from '../generated/schema'
+import { BaseRewardPool, RewardFactory } from '../generated/templates'
+import { BaseRewardPool as BaseRewardPoolContract } from '../generated/templates/BaseRewardPool/BaseRewardPool'
+import { CvxStakingProxy } from '../generated/Booster/CvxStakingProxy'
+import { adjustAccount } from './accounts'
+import { EIGHTEEN_DECIMALS, ZERO } from './lib'
+import { getToken } from './token'
 
-let ZERO_ADDRESS = Address.fromString('0x0000000000000000000000000000000000000000')
+let ZERO_ADDRESS = Address.fromString(
+  '0x0000000000000000000000000000000000000000',
+)
 
-export function handleArbitratorUpdated(event: ArbitratorUpdated): void {
-}
+export function handleArbitratorUpdated(event: ArbitratorUpdated): void {}
 
 export function handleFactoriesUpdated(event: FactoriesUpdated): void {
   if (event.params.rewardFactory !== ZERO_ADDRESS) {
@@ -46,13 +47,13 @@ export function handleOwnerUpdated(event: OwnerUpdated): void {}
 export function handlePoolAdded(event: PoolAdded): void {
   let pool = new Pool(event.params.pid.toString())
 
-  pool.lpToken = getToken(event.params.lpToken).id;
-  pool.token = getToken(event.params.token).id;
+  pool.lpToken = getToken(event.params.lpToken).id
+  pool.token = getToken(event.params.token).id
   pool.deposited = BigInt.fromI32(0).toBigDecimal()
   pool.staked = BigInt.fromI32(0).toBigDecimal()
   pool.rewardsLastUpdated = 0
   pool.rewardPerTokenStored = ZERO
-  
+
   pool.save()
 }
 
@@ -61,9 +62,11 @@ export function handlePoolManagerUpdated(event: PoolManagerUpdated): void {}
 export function handlePoolShutdown(event: PoolShutdown): void {}
 
 export function handleRewardContractsUpdated(
-  event: RewardContractsUpdated
+  event: RewardContractsUpdated,
 ): void {
-  let cvxCrvRewardContract = BaseRewardPoolContract.bind(event.params.lockRewards)
+  let cvxCrvRewardContract = BaseRewardPoolContract.bind(
+    event.params.lockRewards,
+  )
   let lockRewardsPool = new Pool('cvxCrv')
   lockRewardsPool.token = getToken(cvxCrvRewardContract.stakingToken()).id
   lockRewardsPool.deposited = BigInt.fromI32(0).toBigDecimal()
@@ -104,7 +107,12 @@ export function handleDeposited(event: Deposited): void {
   let pool = Pool.load(event.params.poolid.toString())!
   pool.deposited = pool.deposited.plus(amount)
 
-  adjustAccount(event.params.poolid.toString(), event.params.user, ZERO.toBigDecimal(), amount)
+  adjustAccount(
+    event.params.poolid.toString(),
+    event.params.user,
+    ZERO.toBigDecimal(),
+    amount,
+  )
 
   pool.save()
 }
@@ -115,7 +123,12 @@ export function handleWithdrawn(event: Withdrawn): void {
   let pool = Pool.load(event.params.poolid.toString())!
   pool.deposited = pool.deposited.minus(amount)
 
-  adjustAccount(event.params.poolid.toString(), event.params.user, ZERO.toBigDecimal(), amount.neg())
+  adjustAccount(
+    event.params.poolid.toString(),
+    event.params.user,
+    ZERO.toBigDecimal(),
+    amount.neg(),
+  )
 
   pool.save()
 }
