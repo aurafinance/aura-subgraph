@@ -1,7 +1,6 @@
-import { Address, BigDecimal } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { Account, AccountPool } from '../generated/schema'
 import { BaseRewardPool } from '../generated/templates/BaseRewardPool/BaseRewardPool'
-import { ZERO } from './lib'
 
 export function adjustAccount(
   pool: string,
@@ -23,10 +22,10 @@ export function adjustAccount(
     accountPool = new AccountPool(accountPoolId)
     accountPool.account = accountAddress.toHex()
     accountPool.pool = pool
-    accountPool.deposited = ZERO.toBigDecimal()
-    accountPool.staked = ZERO.toBigDecimal()
-    accountPool.userRewardPerTokenPaid = ZERO
-    accountPool.rewards = ZERO
+    accountPool.deposited = BigDecimal.zero()
+    accountPool.staked = BigDecimal.zero()
+    accountPool.userRewardPerTokenPaid = BigInt.zero()
+    accountPool.rewards = BigInt.zero()
     accountPool.lastUpdatedTimestamp = 0
   }
 

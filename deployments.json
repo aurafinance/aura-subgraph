@@ -1,6 +1,10 @@
 {
   "mainnet": {
     "network": "mainnet",
+    "AuraLocker": {
+      "address": "NOT_DEPLOYED",
+      "startBlock": 9999999999
+    },
     "Booster": {
       "address": "NOT_DEPLOYED",
       "startBlock": 9999999999
@@ -8,6 +12,10 @@
   },
   "rinkeby": {
     "network": "rinkeby",
+    "AuraLocker": {
+      "address": "0x0DACcE714D0dDD2f78f406752f5aBbAAd1D20062",
+      "startBlock": 10269503
+    },
     "Booster": {
       "address": "0x0DACcE714D0dDD2f78f406752f5aBbAAd1D20062",
       "startBlock": 10269503
@@ -15,6 +23,10 @@
   },
   "kovan": {
     "network": "kovan",
+    "AuraLocker": {
+      "address": "NOT_DEPLOYED",
+      "startBlock": 9999999999
+    },
     "Booster": {
       "address": "NOT_DEPLOYED",
       "startBlock": 9999999999

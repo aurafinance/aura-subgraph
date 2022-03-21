@@ -1,34 +1,181 @@
-type Pool @entity {
-  id: ID!
-  token: Token
-  lpToken: Token
-  deposited: BigDecimal!
-  staked: BigDecimal!
-  accounts: [AccountPool!]! @derivedFrom(field: "pool")
-
-  rewardPool: Bytes
-  rewardsLastUpdated: Int!
-  rewardPerTokenStored: BigInt!
-}
+directive @entity on OBJECT
+directive @derivedFrom(field: String!) on FIELD_DEFINITION
+scalar BigInt
+scalar Bytes
 
 type Account @entity {
+  """
+  Address
+  """
   id: ID!
-  pools: [AccountPool!]! @derivedFrom(field: "account")
+
+  poolAccounts: [PoolAccount!]! @derivedFrom(field: "account")
+
+  cvxLockerAccount: CvxLockerAccount
 }
 
-type AccountPool @entity {
+type CvxLockerAccount @entity {
+  """
+  {Account.id}
+  """
   id: ID!
+
   account: Account!
-  pool: Pool!
-  deposited: BigDecimal!
-  staked: BigDecimal!
-  userRewardPerTokenPaid: BigInt!
+
+  """
+  AuraLocker.balances(account)
+  """
+  balanceLocked: BigInt!
+  balanceNextUnlockIndex: Int!
+
+  """
+  AuraLocker.rewardData(account)
+  """
+  periodFinish: Int!
+  lastUpdateTime: Int!
+  rewardRate: BigInt!
+  rewardPerTokenPaid: BigInt!
+
+  """
+  AuraLocker.userLocks(account)
+  """
+  userLocks: [CvxLockerUserLock!]! @derivedFrom(field: "cvxLockerAccount")
+
+  """
+  AuraLocker.userData(account)
+  """
+  userData: [CvxLockerUserData!]! @derivedFrom(field: "cvxLockerAccount")
+}
+
+type CvxLockerUserLock @entity {
+  """
+  {CvxLockerAccount.id}.{index}
+  """
+  id: ID!
+
+  cvxLockerAccount: CvxLockerAccount!
+
+  amount: BigInt!
+
+  unlockTime: Int!
+}
+
+type CvxLockerUserData @entity {
+  """
+  {CvxLockerAccount.id}.{Token.id}
+  """
+  id: ID!
+
+  cvxLockerAccount: CvxLockerAccount!
+
+  token: ID!
+
   rewards: BigInt!
-  lastUpdatedTimestamp: Int!
+
+  rewardPerTokenPaid: BigInt!
+}
+
+type PoolAccount @entity {
+  """
+  {Pool.id}.{Account.id}
+  """
+  id: ID!
+
+  account: Account!
+
+  pool: IPool!
+
+  """
+  BaseRewardPool.balanceOf(account)
+  i.e. the account's staked LP tokens
+  """
+  balance: BigInt!
+
+  """
+  BaseRewardPool.rewards(account)
+  """
+  rewards: BigInt!
+
+  """
+  BaseRewardPool.userRewardPerTokenPaid(account)
+  """
+  rewardPerTokenPaid: BigInt!
+}
+
+interface IPool {
+  id: ID!
+
+  depositToken: Token!
+
+  rewardsPool: Bytes!
+
+  accounts: [PoolAccount!]! @derivedFrom(field: "pool")
+}
+
+type FactoryPool implements IPool @entity {
+  """
+  Pool ID (pid)
+  """
+  id: ID!
+
+  depositToken: Token!
+
+  lpToken: Token!
+
+  rewardsPool: Bytes!
+
+  gauge: Bytes!
+
+  stash: Bytes!
+
+  isShutdown: Boolean!
+
+  accounts: [PoolAccount!]! @derivedFrom(field: "pool")
+}
+
+type CvxPool implements IPool @entity {
+  """
+  Singleton: "cvx"
+  """
+  id: ID!
+
+  depositToken: Token!
+
+  rewardsPool: Bytes!
+
+  accounts: [PoolAccount!]! @derivedFrom(field: "pool")
+}
+
+type CvxCrvPool implements IPool @entity {
+  """
+  Singleton: "cvxCrv"
+  """
+  id: ID!
+
+  depositToken: Token!
+
+  rewardsPool: Bytes!
+
+  reductionPerCliff: BigInt!
+
+  totalCliffs: BigInt!
+
+  totalSupply: BigInt!
+
+  maxSupply: BigInt!
+
+  accounts: [PoolAccount!]! @derivedFrom(field: "pool")
 }
 
 type Token @entity {
+  """
+  Address
+  """
   id: ID!
+
+  decimals: Int!
+
   symbol: String!
+
   name: String!
 }
