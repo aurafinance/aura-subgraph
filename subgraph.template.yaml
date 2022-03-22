@@ -67,6 +67,9 @@ dataSources:
         - event: Withdrawn(indexed address,indexed uint256,uint256)
           handler: handleWithdrawn
       file: ./src/mapping/Booster.ts
+
+  # Theoretically this can change with AuraStakingProxy.setRewards,
+  # but for now it's not a template because there's no way to track it
   - kind: ethereum
     name: AuraLocker
     network: '{{network}}'
@@ -135,14 +138,27 @@ templates:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - ArbitratorUpdated
+        - AccessChanged
+        - ActiveRewardAdded
+        - ActiveRewardRemoved
+        - RewardPoolCreated
+        - TokenRewardPoolCreated
       abis:
         - name: RewardFactory
           file: ./abis/RewardFactory.json
       eventHandlers:
+        - event: AccessChanged(address,bool)
+          handler: handleAccessChanged
+        - event: ActiveRewardAdded(address,uint256)
+          handler: handleActiveRewardAdded
+        - event: ActiveRewardRemoved(address,uint256)
+          handler: handleActiveRewardRemoved
         - event: RewardPoolCreated(address,uint256,address)
           handler: handleRewardPoolCreated
+        - event: TokenRewardPoolCreated(address,address,address,address)
+          handler: handleTokenRewardPoolCreated
       file: ./src/mapping/RewardFactory.ts
+
   - kind: ethereum
     name: BaseRewardPool
     network: '{{network}}'
@@ -153,7 +169,10 @@ templates:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - ArbitratorUpdated
+        - Staked
+        - Withdrawn
+        - RewardAdded
+        - RewardPaid
       abis:
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
@@ -162,4 +181,8 @@ templates:
           handler: handleStaked
         - event: Withdrawn(indexed address,uint256)
           handler: handleWithdrawn
+        - event: RewardAdded(uint256)
+          handler: handleRewardAdded
+        - event: RewardPaid(indexed address,uint256)
+          handler: handleRewardPaid
       file: ./src/mapping/BaseRewardPool.ts

@@ -1,7 +1,26 @@
-directive @entity on OBJECT
-directive @derivedFrom(field: String!) on FIELD_DEFINITION
-scalar BigInt
-scalar Bytes
+interface RewardData {
+  token: Token!
+
+  """
+  Timestamp for current period finish
+  """
+  periodFinish: Int!
+
+  """
+  Last time any user took action
+  """
+  lastUpdateTime: Int!
+
+  """
+  RewardRate for the rest of the period
+  """
+  rewardRate: BigInt!
+
+  """
+  Ever increasing rewardPerToken rate, based on % of total supply
+  """
+  rewardPerTokenStored: BigInt!
+}
 
 type Account @entity {
   """
@@ -21,6 +40,8 @@ type CvxLockerAccount @entity {
   id: ID!
 
   account: Account!
+
+  balance: BigInt!
 
   """
   AuraLocker.balances(account)
@@ -83,36 +104,45 @@ type PoolAccount @entity {
 
   account: Account!
 
-  pool: IPool!
+  pool: Pool!
 
   """
-  BaseRewardPool.balanceOf(account)
+  balanceOf(account)
   i.e. the account's staked LP tokens
   """
   balance: BigInt!
 
   """
-  BaseRewardPool.rewards(account)
+  rewards(account)
   """
   rewards: BigInt!
 
   """
-  BaseRewardPool.userRewardPerTokenPaid(account)
+  userRewardPerTokenPaid(account)
   """
   rewardPerTokenPaid: BigInt!
 }
 
-interface IPool {
+type PoolRewardData implements RewardData @entity {
+  """
+  {pool.id}.{token.id}
+  """
   id: ID!
 
-  depositToken: Token!
+  token: Token!
 
-  rewardsPool: Bytes!
+  periodFinish: Int!
 
-  accounts: [PoolAccount!]! @derivedFrom(field: "pool")
+  lastUpdateTime: Int!
+
+  rewardRate: BigInt!
+
+  rewardPerTokenStored: BigInt!
+
+  pool: Pool!
 }
 
-type FactoryPool implements IPool @entity {
+type Pool @entity {
   """
   Pool ID (pid)
   """
@@ -120,51 +150,77 @@ type FactoryPool implements IPool @entity {
 
   depositToken: Token!
 
-  lpToken: Token!
+  rewardPool: Bytes!
 
-  rewardsPool: Bytes!
+  totalSupply: BigInt!
+
+  factoryPoolData: FactoryPoolData
+
+  rewardData: [PoolRewardData!]! @derivedFrom(field: "pool")
+
+  accounts: [PoolAccount!]! @derivedFrom(field: "pool")
+}
+
+type FactoryPoolData @entity {
+  """
+  {pool.id}
+  """
+  id: ID!
+
+  pool: Pool!
+
+  lpToken: Token!
 
   gauge: Bytes!
 
   stash: Bytes!
 
   isShutdown: Boolean!
-
-  accounts: [PoolAccount!]! @derivedFrom(field: "pool")
 }
 
-type CvxPool implements IPool @entity {
-  """
-  Singleton: "cvx"
-  """
-  id: ID!
-
-  depositToken: Token!
-
-  rewardsPool: Bytes!
-
-  accounts: [PoolAccount!]! @derivedFrom(field: "pool")
-}
-
-type CvxCrvPool implements IPool @entity {
+type CvxCrvPoolData @entity {
   """
   Singleton: "cvxCrv"
   """
   id: ID!
 
-  depositToken: Token!
+  pool: Pool!
 
-  rewardsPool: Bytes!
+  maxSupply: BigInt!
 
   reductionPerCliff: BigInt!
 
   totalCliffs: BigInt!
+}
 
-  totalSupply: BigInt!
+type AuraLocker @entity {
+  """
+  Singleton: "AuraLocker"
+  """
+  id: ID!
 
-  maxSupply: BigInt!
+  address: Bytes!
 
-  accounts: [PoolAccount!]! @derivedFrom(field: "pool")
+  rewardData: [AuraLockerRewardData!]! @derivedFrom(field: "auraLocker")
+}
+
+type AuraLockerRewardData implements RewardData @entity {
+  """
+  {token.id}
+  """
+  id: ID!
+
+  token: Token!
+
+  periodFinish: Int!
+
+  lastUpdateTime: Int!
+
+  rewardRate: BigInt!
+
+  rewardPerTokenStored: BigInt!
+
+  auraLocker: AuraLocker!
 }
 
 type Token @entity {

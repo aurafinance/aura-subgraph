@@ -5,6 +5,7 @@
     "prepare:rinkeby": "node ./prepare.js rinkeby",
     "prepare:kovan": "node ./prepare.js kovan",
     "prepare:mainnet": "node ./prepare.js mainnet",
+    "schema:rinkeby": "get-graphql-schema https://api.thegraph.com/subgraphs/name/0xbutterfield/aura-rinkeby > deployed-schema.graphql",
     "codegen": "graph codegen",
     "build": "graph build",
     "auth": "graph auth --product hosted-service",
@@ -22,6 +23,7 @@
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.28.0",
     "@graphprotocol/graph-ts": "^0.26.0",
+    "get-graphql-schema": "^2.1.2",
     "mustache": "^4.2.0",
     "prettier": "^2.6.0"
   }

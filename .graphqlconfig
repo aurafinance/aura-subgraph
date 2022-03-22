@@ -1,0 +1,15 @@
+{
+  "name": "Schema",
+  "schemaPath": "deployed-schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "Rinkeby": {
+        "url": "https://api.thegraph.com/subgraphs/name/0xbutterfield/aura-rinkeby",
+        "headers": {
+          "user-agent": "JS GraphQL"
+        },
+        "introspect": false
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+    cvxCrvPoolData(id: "cvxCrv") {
+        maxSupply
+        totalCliffs
+        reductionPerCliff
+    }
+    pools {
+        id
+        totalSupply
+        depositToken {
+            symbol
+        }
+        factoryPoolData {
+            lpToken {
+                symbol
+            }
+            gauge
+            stash
+            isShutdown
+        }
+        rewardPool
+        rewardData {
+            rewardRate
+            rewardPerTokenStored
+            token {
+                symbol
+            }
+        }
+        accounts(first: 1) {
+            id
+            balance
+            rewards
+            rewardPerTokenPaid
+        }
+    }
+}
