@@ -5,7 +5,7 @@
     "prepare:rinkeby": "node ./prepare.js rinkeby",
     "prepare:kovan": "node ./prepare.js kovan",
     "prepare:mainnet": "node ./prepare.js mainnet",
-    "schema:rinkeby": "get-graphql-schema https://api.thegraph.com/subgraphs/name/0xbutterfield/aura-rinkeby > deployed-schema.graphql",
+    "schema:rinkeby": "get-graphql-schema https://api.thegraph.com/subgraphs/name/0xbutterfield/aura-rinkeby > schema/deployed-schema.graphql",
     "codegen": "graph codegen",
     "build": "graph build",
     "auth": "graph auth --product hosted-service",

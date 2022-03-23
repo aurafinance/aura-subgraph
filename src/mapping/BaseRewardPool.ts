@@ -10,10 +10,14 @@ import { Pool } from '../../generated/schema'
 import { updatePoolAccount } from '../accounts'
 import { updatePoolRewardData } from '../rewards'
 
-export function handleStaked(event: Staked): void {
+function getPoolFromPid(): Pool {
   let context = dataSource.context()
   let pid = context.getString('pid')
-  let pool = Pool.load(pid)!
+  return Pool.load(pid)!
+}
+
+export function handleStaked(event: Staked): void {
+  let pool = getPoolFromPid()
 
   updatePoolRewardData(pool)
 
@@ -24,9 +28,7 @@ export function handleStaked(event: Staked): void {
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
-  let context = dataSource.context()
-  let pid = context.getString('pid')
-  let pool = Pool.load(pid)!
+  let pool = getPoolFromPid()
 
   updatePoolRewardData(pool)
 
@@ -37,9 +39,7 @@ export function handleWithdrawn(event: Withdrawn): void {
 }
 
 export function handleRewardAdded(event: RewardAdded): void {
-  let context = dataSource.context()
-  let pid = context.getString('pid')
-  let pool = Pool.load(pid)!
+  let pool = getPoolFromPid()
 
   updatePoolRewardData(pool)
 
@@ -47,9 +47,7 @@ export function handleRewardAdded(event: RewardAdded): void {
 }
 
 export function handleRewardPaid(event: RewardPaid): void {
-  let context = dataSource.context()
-  let pid = context.getString('pid')
-  let pool = Pool.load(pid)!
+  let pool = getPoolFromPid()
 
   updatePoolRewardData(pool)
 

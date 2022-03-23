@@ -19,7 +19,7 @@ import {
 import { CvxStakingProxy } from '../../generated/Booster/CvxStakingProxy'
 import { BaseRewardPool as BaseRewardPoolContract } from '../../generated/Booster/BaseRewardPool'
 import { RewardFactory, BaseRewardPool } from '../../generated/templates'
-import { CvxCrvPoolData, FactoryPoolData, Pool } from '../../generated/schema'
+import { AuraBalPoolData, FactoryPoolData, Pool } from '../../generated/schema'
 
 import { getToken } from '../tokens'
 import { updatePoolRewardData } from '../rewards'
@@ -66,6 +66,7 @@ export function handlePoolAdded(event: PoolAdded): void {
   factoryPoolData.stash = event.params.stash
   factoryPoolData.save()
 
+  pool.isFactoryPool = true
   pool.depositToken = getToken(event.params.token).id
   pool.totalSupply = BigInt.zero()
   pool.rewardPool = event.params.rewardPool
@@ -87,43 +88,45 @@ export function handleRewardContractsUpdated(
   event: RewardContractsUpdated,
 ): void {
   {
-    let cvxCrvRewardContract = BaseRewardPoolContract.bind(
+    let auraBalRewardContract = BaseRewardPoolContract.bind(
       event.params.lockRewards,
     )
-    let pool = new Pool('cvxCrv')
+    let pool = new Pool('auraBal')
 
-    pool.depositToken = getToken(cvxCrvRewardContract.stakingToken()).id
+    pool.isFactoryPool = false
+    pool.depositToken = getToken(auraBalRewardContract.stakingToken()).id
     pool.rewardPool = event.params.lockRewards
     pool.totalSupply = BigInt.zero()
     updatePoolRewardData(pool)
     pool.save()
 
     let context = new DataSourceContext()
-    context.setString('pid', 'cvxCrv')
+    context.setString('pid', 'auraBal')
     BaseRewardPool.createWithContext(event.params.lockRewards, context)
 
     {
-      let cvxCrvPoolData = new CvxCrvPoolData(pool.id)
-      cvxCrvPoolData.pool = pool.id
-      cvxCrvPoolData.totalCliffs = BigInt.zero()
-      cvxCrvPoolData.reductionPerCliff = BigInt.zero()
-      cvxCrvPoolData.maxSupply = BigInt.zero()
-      cvxCrvPoolData.save()
+      let poolData = new AuraBalPoolData(pool.id)
+      poolData.pool = pool.id
+      poolData.totalCliffs = BigInt.zero()
+      poolData.reductionPerCliff = BigInt.zero()
+      poolData.maxSupply = BigInt.zero()
+      poolData.save()
     }
   }
 
   {
-    let cvxRewardContract = CvxStakingProxy.bind(event.params.stakerRewards)
-    let pool = new Pool('cvx')
+    let stakingProxy = CvxStakingProxy.bind(event.params.stakerRewards)
+    let pool = new Pool('aura')
 
-    pool.depositToken = getToken(cvxRewardContract.cvx()).id
+    pool.isFactoryPool = false
+    pool.depositToken = getToken(stakingProxy.cvx()).id
     pool.rewardPool = event.params.stakerRewards
     pool.totalSupply = BigInt.zero()
     updatePoolRewardData(pool)
     pool.save()
 
     let context = new DataSourceContext()
-    context.setString('pid', 'cvx')
+    context.setString('pid', 'aura')
     BaseRewardPool.createWithContext(event.params.stakerRewards, context)
   }
 }

@@ -24,21 +24,3 @@ export function updatePoolRewardData(pool: Pool): void {
 
   rewardData.save()
 }
-
-export function updateAuraLockerRewardData(locker: AuraLocker): void {
-  // TODO
-  // let contract = BaseRewardPool.bind(pool.rewardPool)
-  // let token = getToken(contract.rewardToken())
-  //
-  // let id = pool.id + '.' + token.id
-  // let rewardData = new CvxPoolRewardData(id)
-  //
-  // rewardData.token = token.id
-  // rewardData.cvxPool = pool.id
-  // rewardData.rewardPerTokenStored = contract.rewardPerTokenStored()
-  // rewardData.rewardRate = contract.rewardRate()
-  // rewardData.lastUpdateTime = contract.lastUpdateTime().toI32()
-  // rewardData.periodFinish = contract.periodFinish().toI32()
-  //
-  // rewardData.save()
-}

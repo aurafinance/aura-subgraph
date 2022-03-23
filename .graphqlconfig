@@ -1,6 +1,5 @@
 {
   "name": "Schema",
-  "schemaPath": "deployed-schema.graphql",
   "extensions": {
     "endpoints": {
       "Rinkeby": {

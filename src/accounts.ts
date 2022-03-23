@@ -3,13 +3,14 @@ import { Address, BigInt } from '@graphprotocol/graph-ts'
 import {
   Account,
   PoolAccount,
-  CvxLockerAccount,
-  CvxLockerUserData,
-  CvxLockerUserLock,
+  AuraLockerAccount,
+  AuraLockerUserData,
+  AuraLockerUserLock,
   Pool,
 } from '../generated/schema'
 import { AuraLocker } from '../generated/templates/AuraLocker/AuraLocker'
 import { BaseRewardPool } from '../generated/templates/BaseRewardPool/BaseRewardPool'
+import { getToken } from './tokens'
 
 export function getAccount(address: Address): Account {
   let id = address.toHexString()
@@ -55,47 +56,90 @@ export function updatePoolAccount(address: Address, pool: Pool): void {
   poolAccount.save()
 }
 
-export function getCvxLockerAccount(address: Address): CvxLockerAccount {
+export function getAuraLockerAccount(address: Address): AuraLockerAccount {
   let account = getAccount(address)
 
   let id = account.id
-  let cvxLockerAccount = CvxLockerAccount.load(id)
+  let auraLockerAccount = AuraLockerAccount.load(id)
 
-  if (cvxLockerAccount == null) {
-    cvxLockerAccount = new CvxLockerAccount(id)
-    cvxLockerAccount.account = account.id
-    cvxLockerAccount.lastUpdateTime = 0
-    cvxLockerAccount.rewardPerTokenPaid = BigInt.zero()
-    cvxLockerAccount.periodFinish = 0
-    cvxLockerAccount.balanceNextUnlockIndex = 0
-    cvxLockerAccount.balanceLocked = BigInt.zero()
-    cvxLockerAccount.rewardRate = BigInt.zero()
-    cvxLockerAccount.save()
-    return cvxLockerAccount as CvxLockerAccount
+  if (auraLockerAccount == null) {
+    auraLockerAccount = new AuraLockerAccount(id)
+    auraLockerAccount.account = account.id
+    auraLockerAccount.lastUpdateTime = 0
+    auraLockerAccount.rewardPerTokenPaid = BigInt.zero()
+    auraLockerAccount.periodFinish = 0
+    auraLockerAccount.balanceNextUnlockIndex = 0
+    auraLockerAccount.balanceLocked = BigInt.zero()
+    auraLockerAccount.rewardRate = BigInt.zero()
+    auraLockerAccount.save()
+    return auraLockerAccount as AuraLockerAccount
   }
 
-  return cvxLockerAccount as CvxLockerAccount
+  return auraLockerAccount as AuraLockerAccount
 }
 
-export function updateCvxLockerAccount(
+export function updateAuraLockerAccount(
   address: Address,
   locker: Address,
 ): void {
   let contract = AuraLocker.bind(locker)
-  let lockerAccount = getCvxLockerAccount(address)
+  let auraLockerAccount = getAuraLockerAccount(address)
 
-  lockerAccount.balance = contract.balanceOf(address)
+  auraLockerAccount.balance = contract.balanceOf(address)
+  auraLockerAccount.auraLocker = 'AuraLocker'
 
-  // userData is not updated here; we can't iterate over unknown reward tokens
+  let balancesResult = contract.balances(address)
+  auraLockerAccount.balanceLocked = balancesResult.value0
+  auraLockerAccount.balanceNextUnlockIndex = balancesResult.value1.toI32()
 
-  let balances = contract.balances(address)
-  lockerAccount.balanceLocked = balances.value0
-  lockerAccount.balanceNextUnlockIndex = balances.value1.toI32()
-
-  let lockedBalances = contract.lockedBalances(address)
-  for (let i = 0; i++; i < lockedBalances.value3.length) {
-    let lockedBalance = lockedBalances.value3[i]
+  let lockedBalancesResult = contract.lockedBalances(address)
+  for (let i = 0; i++; i < lockedBalancesResult.value3.length) {
+    let lockedBalance = lockedBalancesResult.value3[i]
+    let userLockId = auraLockerAccount.id + '.' + i.toString()
+    let userLock = AuraLockerUserLock.load(userLockId)
+    if (userLock == null) {
+      userLock = new AuraLockerUserLock(userLockId)
+      userLock.auraLockerAccount = auraLockerAccount.id
+    }
+    userLock.amount = lockedBalance.amount
+    userLock.unlockTime = lockedBalance.unlockTime.toI32()
+    userLock.save()
   }
 
-  lockerAccount.save()
+  let rewardDataResult = contract.rewardData(address)
+  auraLockerAccount.periodFinish = rewardDataResult.value0.toI32()
+  auraLockerAccount.lastUpdateTime = rewardDataResult.value1.toI32()
+  auraLockerAccount.rewardRate = rewardDataResult.value2
+  auraLockerAccount.rewardPerTokenPaid = rewardDataResult.value3
+
+  auraLockerAccount.save()
+
+  for (let i = 0; i++; i < 255) {
+    let rewardTokenResult = contract.try_rewardTokens(BigInt.fromI32(i))
+
+    if (
+      rewardTokenResult.reverted ||
+      rewardTokenResult.value == Address.zero()
+    ) {
+      break
+    }
+
+    let userDataResult = contract.userData(address, rewardTokenResult.value)
+
+    let rewardToken = getToken(rewardTokenResult.value)
+
+    let userDataId = auraLockerAccount.id + '.' + rewardToken.id
+    let userData = AuraLockerUserData.load(userDataId)
+
+    if (userData == null) {
+      userData = new AuraLockerUserData(userDataId)
+      userData.auraLockerAccount = auraLockerAccount.id
+      userData.token = rewardToken.id
+    }
+
+    userData.rewards = userDataResult.value0
+    userData.rewardPerTokenPaid = userDataResult.value1
+
+    userData.save()
+  }
 }

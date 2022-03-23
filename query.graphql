@@ -1,9 +1,4 @@
 {
-    cvxCrvPoolData(id: "cvxCrv") {
-        maxSupply
-        totalCliffs
-        reductionPerCliff
-    }
     pools {
         id
         totalSupply

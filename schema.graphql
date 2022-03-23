@@ -30,16 +30,18 @@ type Account @entity {
 
   poolAccounts: [PoolAccount!]! @derivedFrom(field: "account")
 
-  cvxLockerAccount: CvxLockerAccount
+  auraLockerAccount: AuraLockerAccount
 }
 
-type CvxLockerAccount @entity {
+type AuraLockerAccount @entity {
   """
   {Account.id}
   """
   id: ID!
 
   account: Account!
+
+  auraLocker: AuraLocker!
 
   balance: BigInt!
 
@@ -60,34 +62,34 @@ type CvxLockerAccount @entity {
   """
   AuraLocker.userLocks(account)
   """
-  userLocks: [CvxLockerUserLock!]! @derivedFrom(field: "cvxLockerAccount")
+  userLocks: [AuraLockerUserLock!]! @derivedFrom(field: "auraLockerAccount")
 
   """
   AuraLocker.userData(account)
   """
-  userData: [CvxLockerUserData!]! @derivedFrom(field: "cvxLockerAccount")
+  userData: [AuraLockerUserData!]! @derivedFrom(field: "auraLockerAccount")
 }
 
-type CvxLockerUserLock @entity {
+type AuraLockerUserLock @entity {
   """
-  {CvxLockerAccount.id}.{index}
+  {AuraLockerAccount.id}.{index}
   """
   id: ID!
 
-  cvxLockerAccount: CvxLockerAccount!
+  auraLockerAccount: AuraLockerAccount!
 
   amount: BigInt!
 
   unlockTime: Int!
 }
 
-type CvxLockerUserData @entity {
+type AuraLockerUserData @entity {
   """
-  {CvxLockerAccount.id}.{Token.id}
+  {AuraLockerAccount.id}.{Token.id}
   """
   id: ID!
 
-  cvxLockerAccount: CvxLockerAccount!
+  auraLockerAccount: AuraLockerAccount!
 
   token: ID!
 
@@ -154,6 +156,8 @@ type Pool @entity {
 
   totalSupply: BigInt!
 
+  isFactoryPool: Boolean!
+
   factoryPoolData: FactoryPoolData
 
   rewardData: [PoolRewardData!]! @derivedFrom(field: "pool")
@@ -178,9 +182,9 @@ type FactoryPoolData @entity {
   isShutdown: Boolean!
 }
 
-type CvxCrvPoolData @entity {
+type AuraBalPoolData @entity {
   """
-  Singleton: "cvxCrv"
+  Singleton: "auraBal"
   """
   id: ID!
 
@@ -200,6 +204,8 @@ type AuraLocker @entity {
   id: ID!
 
   address: Bytes!
+
+  accounts: [AuraLockerAccount!]! @derivedFrom(field: "auraLocker")
 
   rewardData: [AuraLockerRewardData!]! @derivedFrom(field: "auraLocker")
 }
