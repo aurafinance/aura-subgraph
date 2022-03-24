@@ -1,6 +1,7 @@
 import { Address, BigInt, DataSourceContext } from '@graphprotocol/graph-ts'
 
 import {
+  Booster,
   ArbitratorUpdated,
   Deposited,
   FactoriesUpdated,
@@ -16,20 +17,27 @@ import {
   VoteDelegateUpdated,
   Withdrawn,
 } from '../../generated/Booster/Booster'
-import { CvxStakingProxy } from '../../generated/Booster/CvxStakingProxy'
 import { BaseRewardPool as BaseRewardPoolContract } from '../../generated/Booster/BaseRewardPool'
 import { RewardFactory, BaseRewardPool } from '../../generated/templates'
-import { AuraBalPoolData, FactoryPoolData, Pool } from '../../generated/schema'
+import { FactoryPoolData, Global, Pool } from '../../generated/schema'
 
 import { getToken } from '../tokens'
 import { updatePoolRewardData } from '../rewards'
+import { getPoolAccount } from '../accounts'
 
 export function handleArbitratorUpdated(event: ArbitratorUpdated): void {
   // TODO
 }
 
 export function handleDeposited(event: Deposited): void {
-  // TODO
+  let poolId = event.params.poolid.toString()
+  let pool = Pool.load(poolId)!
+  pool.totalSupply = pool.totalSupply.plus(event.params.amount)
+  pool.save()
+
+  let poolAccount = getPoolAccount(event.params.user, pool)
+  poolAccount.balance = poolAccount.balance.plus(event.params.amount)
+  poolAccount.save()
 }
 
 export function handleFactoriesUpdated(event: FactoriesUpdated): void {
@@ -60,15 +68,16 @@ export function handlePoolAdded(event: PoolAdded): void {
   let factoryPoolData = new FactoryPoolData(pool.id)
   pool.factoryPoolData = factoryPoolData.id
   factoryPoolData.pool = pool.id
-  factoryPoolData.lpToken = getToken(event.params.lpToken).id
   factoryPoolData.isShutdown = false
   factoryPoolData.gauge = event.params.gauge
   factoryPoolData.stash = event.params.stash
   factoryPoolData.save()
 
   pool.isFactoryPool = true
+  pool.lpToken = getToken(event.params.lpToken).id
   pool.depositToken = getToken(event.params.token).id
   pool.totalSupply = BigInt.zero()
+  pool.totalStaked = BigInt.zero()
   pool.rewardPool = event.params.rewardPool
   updatePoolRewardData(pool)
   pool.save()
@@ -91,12 +100,16 @@ export function handleRewardContractsUpdated(
     let auraBalRewardContract = BaseRewardPoolContract.bind(
       event.params.lockRewards,
     )
+    let boosterContract = Booster.bind(event.address)
+
     let pool = new Pool('auraBal')
 
     pool.isFactoryPool = false
-    pool.depositToken = getToken(auraBalRewardContract.stakingToken()).id
+    pool.lpToken = getToken(boosterContract.crv()).id // BAL
+    pool.depositToken = getToken(auraBalRewardContract.stakingToken()).id // auraBAL
     pool.rewardPool = event.params.lockRewards
     pool.totalSupply = BigInt.zero()
+    pool.totalStaked = BigInt.zero()
     updatePoolRewardData(pool)
     pool.save()
 
@@ -105,29 +118,12 @@ export function handleRewardContractsUpdated(
     BaseRewardPool.createWithContext(event.params.lockRewards, context)
 
     {
-      let poolData = new AuraBalPoolData(pool.id)
-      poolData.pool = pool.id
-      poolData.totalCliffs = BigInt.zero()
-      poolData.reductionPerCliff = BigInt.zero()
-      poolData.maxSupply = BigInt.zero()
-      poolData.save()
+      let global = new Global('global')
+      global.auraBalTotalCliffs = BigInt.zero()
+      global.auraBalReductionPerCliff = BigInt.zero()
+      global.auraBalMaxSupply = BigInt.zero()
+      global.save()
     }
-  }
-
-  {
-    let stakingProxy = CvxStakingProxy.bind(event.params.stakerRewards)
-    let pool = new Pool('aura')
-
-    pool.isFactoryPool = false
-    pool.depositToken = getToken(stakingProxy.cvx()).id
-    pool.rewardPool = event.params.stakerRewards
-    pool.totalSupply = BigInt.zero()
-    updatePoolRewardData(pool)
-    pool.save()
-
-    let context = new DataSourceContext()
-    context.setString('pid', 'aura')
-    BaseRewardPool.createWithContext(event.params.stakerRewards, context)
   }
 }
 
@@ -140,5 +136,12 @@ export function handleVoteDelegateUpdated(event: VoteDelegateUpdated): void {
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
-  // TODO
+  let poolId = event.params.poolid.toString()
+  let pool = Pool.load(poolId)!
+  pool.totalSupply = pool.totalSupply.minus(event.params.amount)
+  pool.save()
+
+  let poolAccount = getPoolAccount(event.params.user, pool)
+  poolAccount.balance = poolAccount.balance.minus(event.params.amount)
+  poolAccount.save()
 }

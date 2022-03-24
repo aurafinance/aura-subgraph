@@ -19,7 +19,7 @@ import { updateAuraLockerAccount } from '../accounts'
 import { getToken } from '../tokens'
 
 function getLocker(address: Address): AuraLocker {
-  let id = 'AuraLocker'
+  let id = 'auraLocker'
   let locker = AuraLocker.load(id)
 
   if (locker == null) {

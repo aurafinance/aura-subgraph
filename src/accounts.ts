@@ -36,6 +36,7 @@ export function getPoolAccount(address: Address, pool: Pool): PoolAccount {
     poolAccount.account = account.id
     poolAccount.pool = pool.id
     poolAccount.balance = BigInt.zero()
+    poolAccount.staked = BigInt.zero()
     poolAccount.rewards = BigInt.zero()
     poolAccount.rewardPerTokenPaid = BigInt.zero()
     poolAccount.save()
@@ -45,15 +46,19 @@ export function getPoolAccount(address: Address, pool: Pool): PoolAccount {
   return poolAccount as PoolAccount
 }
 
-export function updatePoolAccount(address: Address, pool: Pool): void {
-  let contract = BaseRewardPool.bind(Address.fromBytes(pool.rewardPool))
-  let poolAccount = getPoolAccount(address, pool)
+export function updatePoolAccountRewards(
+  poolAccount: PoolAccount,
+  pool: Pool,
+): void {
+  let rewardPoolContract = BaseRewardPool.bind(
+    Address.fromBytes(pool.rewardPool),
+  )
 
-  poolAccount.balance = contract.balanceOf(address)
-  poolAccount.rewards = contract.rewards(address)
-  poolAccount.rewardPerTokenPaid = contract.userRewardPerTokenPaid(address)
+  let address = Address.fromString(poolAccount.account)
 
-  poolAccount.save()
+  poolAccount.rewards = rewardPoolContract.rewards(address)
+  poolAccount.rewardPerTokenPaid =
+    rewardPoolContract.userRewardPerTokenPaid(address)
 }
 
 export function getAuraLockerAccount(address: Address): AuraLockerAccount {
@@ -86,7 +91,7 @@ export function updateAuraLockerAccount(
   let auraLockerAccount = getAuraLockerAccount(address)
 
   auraLockerAccount.balance = contract.balanceOf(address)
-  auraLockerAccount.auraLocker = 'AuraLocker'
+  auraLockerAccount.auraLocker = 'auraLocker'
 
   let balancesResult = contract.balances(address)
   auraLockerAccount.balanceLocked = balancesResult.value0

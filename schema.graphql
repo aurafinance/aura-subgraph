@@ -109,10 +109,15 @@ type PoolAccount @entity {
   pool: Pool!
 
   """
-  balanceOf(account)
-  i.e. the account's staked LP tokens
+  depositToken.balanceOf(account)
   """
   balance: BigInt!
+
+  """
+  rewardsPool.balanceOf(account)
+  i.e. the account's staked LP tokens
+  """
+  staked: BigInt!
 
   """
   rewards(account)
@@ -150,16 +155,42 @@ type Pool @entity {
   """
   id: ID!
 
+  """
+  The Aura deposit token; a 1:1 token representing an LP deposit.
+  - Factory pools    => an auraLP token
+  - auraBAL staking  => auraBAL
+  """
   depositToken: Token!
 
-  rewardPool: Bytes!
+  """
+  LP Token refers to:
+  - Factory pools    => e.g. a given BPT
+  - auraBAL staking  => BAL
+  """
+  lpToken: Token!
 
+  """
+  Total supply of the depositToken
+  """
   totalSupply: BigInt!
+
+  """
+  Total staked in the rewardPool
+  """
+  totalStaked: BigInt!
+
+  """
+  BaseRewardPool (for factory pools)
+  """
+  rewardPool: Bytes!
 
   isFactoryPool: Boolean!
 
   factoryPoolData: FactoryPoolData
 
+  """
+  List of rewards per-token
+  """
   rewardData: [PoolRewardData!]! @derivedFrom(field: "pool")
 
   accounts: [PoolAccount!]! @derivedFrom(field: "pool")
@@ -173,8 +204,6 @@ type FactoryPoolData @entity {
 
   pool: Pool!
 
-  lpToken: Token!
-
   gauge: Bytes!
 
   stash: Bytes!
@@ -182,19 +211,17 @@ type FactoryPoolData @entity {
   isShutdown: Boolean!
 }
 
-type AuraBalPoolData @entity {
+type Global @entity {
   """
-  Singleton: "auraBal"
+  Singleton: "global"
   """
   id: ID!
 
-  pool: Pool!
+  auraBalMaxSupply: BigInt!
 
-  maxSupply: BigInt!
+  auraBalReductionPerCliff: BigInt!
 
-  reductionPerCliff: BigInt!
-
-  totalCliffs: BigInt!
+  auraBalTotalCliffs: BigInt!
 }
 
 type AuraLocker @entity {
@@ -204,6 +231,8 @@ type AuraLocker @entity {
   id: ID!
 
   address: Bytes!
+
+  totalLocked: BigInt!
 
   accounts: [AuraLockerAccount!]! @derivedFrom(field: "auraLocker")
 

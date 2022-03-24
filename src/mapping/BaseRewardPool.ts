@@ -7,7 +7,7 @@ import {
   RewardPaid,
 } from '../../generated/templates/BaseRewardPool/BaseRewardPool'
 import { Pool } from '../../generated/schema'
-import { updatePoolAccount } from '../accounts'
+import { getPoolAccount, updatePoolAccountRewards } from '../accounts'
 import { updatePoolRewardData } from '../rewards'
 
 function getPoolFromPid(): Pool {
@@ -18,40 +18,40 @@ function getPoolFromPid(): Pool {
 
 export function handleStaked(event: Staked): void {
   let pool = getPoolFromPid()
-
   updatePoolRewardData(pool)
-
-  updatePoolAccount(event.params.user, pool)
-
-  pool.totalSupply = pool.totalSupply.plus(event.params.amount)
+  pool.totalStaked = pool.totalStaked.plus(event.params.amount)
   pool.save()
+
+  let poolAccount = getPoolAccount(event.params.user, pool)
+  updatePoolAccountRewards(poolAccount, pool)
+  poolAccount.staked = poolAccount.staked.plus(event.params.amount)
+  poolAccount.save()
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
   let pool = getPoolFromPid()
-
   updatePoolRewardData(pool)
-
-  updatePoolAccount(event.params.user, pool)
-
-  pool.totalSupply = pool.totalSupply.minus(event.params.amount)
+  pool.totalStaked = pool.totalStaked.minus(event.params.amount)
   pool.save()
+
+  let poolAccount = getPoolAccount(event.params.user, pool)
+  updatePoolAccountRewards(poolAccount, pool)
+  poolAccount.staked = poolAccount.staked.minus(event.params.amount)
+  poolAccount.save()
 }
 
 export function handleRewardAdded(event: RewardAdded): void {
   let pool = getPoolFromPid()
-
   updatePoolRewardData(pool)
-
   pool.save()
 }
 
 export function handleRewardPaid(event: RewardPaid): void {
   let pool = getPoolFromPid()
-
   updatePoolRewardData(pool)
-
-  updatePoolAccount(event.params.user, pool)
-
   pool.save()
+
+  let poolAccount = getPoolAccount(event.params.user, pool)
+  updatePoolAccountRewards(poolAccount, pool)
+  poolAccount.save()
 }

@@ -1,31 +1,18 @@
 {
     pools {
         id
-        totalSupply
-        depositToken {
-            symbol
-        }
         factoryPoolData {
             lpToken {
                 symbol
+                id
             }
             gauge
-            stash
-            isShutdown
+            id
         }
         rewardPool
-        rewardData {
-            rewardRate
-            rewardPerTokenStored
-            token {
-                symbol
-            }
-        }
-        accounts(first: 1) {
+        depositToken {
             id
-            balance
-            rewards
-            rewardPerTokenPaid
+            symbol
         }
     }
 }
