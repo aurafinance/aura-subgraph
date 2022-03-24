@@ -66,7 +66,66 @@ dataSources:
           handler: handleVoteDelegateUpdated
         - event: Withdrawn(indexed address,indexed uint256,uint256)
           handler: handleWithdrawn
-      file: ./src/booster.ts
+      file: ./src/mapping/Booster.ts
+
+  # Theoretically this can change with AuraStakingProxy.setRewards,
+  # but for now it's not a template because there's no way to track it
+  - kind: ethereum
+    name: AuraLocker
+    network: '{{network}}'
+    source:
+      address: '{{AuraLocker.address}}'
+      abi: AuraLocker
+      startBlock: {{AuraLocker.startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - DelegateChanged
+        - DelegateCheckpointed
+        - KickIncentiveSet
+        - KickReward
+        - OwnershipTransferred
+        - Recovered
+        - RewardAdded
+        - RewardPaid
+        - Shutdown
+        - Staked
+        - Withdrawn
+      abis:
+        - name: AuraLocker
+          file: ./abis/AuraLocker.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: BaseRewardPool
+          file: ./abis/BaseRewardPool.json
+        - name: CvxStakingProxy
+          file: ./abis/CvxStakingProxy.json
+      eventHandlers:
+        - event: DelegateChanged(indexed address,indexed address,indexed address)
+          handler: handleDelegateChanged
+        - event: DelegateCheckpointed(indexed address)
+          handler: handleDelegateCheckpointed
+        - event: KickIncentiveSet(uint256,uint256)
+          handler: handleKickIncentiveSet
+        - event: KickReward(indexed address,indexed address,uint256)
+          handler: handleKickReward
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: Recovered(address,uint256)
+          handler: handleRecovered
+        - event: RewardAdded(indexed address,uint256)
+          handler: handleRewardAdded
+        - event: RewardPaid(indexed address,indexed address,uint256)
+          handler: handleRewardPaid
+        - event: Shutdown()
+          handler: handleShutdown
+        - event: Staked(indexed address,uint256,uint256)
+          handler: handleStaked
+        - event: Withdrawn(indexed address,uint256,bool)
+          handler: handleWithdrawn
+      file: ./src/mapping/AuraLocker.ts
 
 templates:
   - kind: ethereum
@@ -79,14 +138,27 @@ templates:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - ArbitratorUpdated
+        - AccessChanged
+        - ActiveRewardAdded
+        - ActiveRewardRemoved
+        - RewardPoolCreated
+        - TokenRewardPoolCreated
       abis:
         - name: RewardFactory
           file: ./abis/RewardFactory.json
       eventHandlers:
+        - event: AccessChanged(address,bool)
+          handler: handleAccessChanged
+        - event: ActiveRewardAdded(address,uint256)
+          handler: handleActiveRewardAdded
+        - event: ActiveRewardRemoved(address,uint256)
+          handler: handleActiveRewardRemoved
         - event: RewardPoolCreated(address,uint256,address)
           handler: handleRewardPoolCreated
-      file: ./src/reward.ts
+        - event: TokenRewardPoolCreated(address,address,address,address)
+          handler: handleTokenRewardPoolCreated
+      file: ./src/mapping/RewardFactory.ts
+
   - kind: ethereum
     name: BaseRewardPool
     network: '{{network}}'
@@ -97,13 +169,20 @@ templates:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - ArbitratorUpdated
+        - Staked
+        - Withdrawn
+        - RewardAdded
+        - RewardPaid
       abis:
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
       eventHandlers:
         - event: Staked(indexed address,uint256)
-          handler: handleDeposit
+          handler: handleStaked
         - event: Withdrawn(indexed address,uint256)
-          handler: handleWithdrawal
-      file: ./src/reward.ts
+          handler: handleWithdrawn
+        - event: RewardAdded(uint256)
+          handler: handleRewardAdded
+        - event: RewardPaid(indexed address,uint256)
+          handler: handleRewardPaid
+      file: ./src/mapping/BaseRewardPool.ts

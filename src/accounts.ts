@@ -1,44 +1,150 @@
-import { Address, BigDecimal } from "@graphprotocol/graph-ts";
-import { Account, AccountPool } from "../generated/schema";
-import { BaseRewardPool } from "../generated/templates/BaseRewardPool/BaseRewardPool";
-import { ZERO } from "./lib";
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
-export function adjustAccount(
-  pool: string,
-  accountAddress: Address,
-  staked: BigDecimal,
-  deposited: BigDecimal,
-  rewardContractAddress: Address | null = null,
-  timestamp: u32 = 0
-): void {
-  let account = Account.load(accountAddress.toHex())
-  if (!account) {
-    account = new Account(accountAddress.toHex())
+import {
+  Account,
+  PoolAccount,
+  AuraLockerAccount,
+  AuraLockerUserData,
+  AuraLockerUserLock,
+  Pool,
+} from '../generated/schema'
+import { AuraLocker } from '../generated/templates/AuraLocker/AuraLocker'
+import { BaseRewardPool } from '../generated/templates/BaseRewardPool/BaseRewardPool'
+import { getToken } from './tokens'
+
+export function getAccount(address: Address): Account {
+  let id = address.toHexString()
+  let account = Account.load(id)
+
+  if (account == null) {
+    account = new Account(id)
     account.save()
+    return account as Account
   }
 
-  let accountPoolId = accountAddress.toHex() + '-' + pool
-  let accountPool = AccountPool.load(accountPoolId)
-  if (!accountPool) {
-    accountPool = new AccountPool(accountPoolId)
-    accountPool.account = accountAddress.toHex()
-    accountPool.pool = pool
-    accountPool.deposited = ZERO.toBigDecimal()
-    accountPool.staked = ZERO.toBigDecimal()
-    accountPool.userRewardPerTokenPaid = ZERO
-    accountPool.rewards = ZERO
-    accountPool.lastUpdatedTimestamp = 0
+  return account as Account
+}
+
+export function getPoolAccount(address: Address, pool: Pool): PoolAccount {
+  let account = getAccount(address)
+
+  let id = pool.id + '.' + account.id
+  let poolAccount = PoolAccount.load(id)
+
+  if (poolAccount == null) {
+    poolAccount = new PoolAccount(id)
+    poolAccount.account = account.id
+    poolAccount.pool = pool.id
+    poolAccount.balance = BigInt.zero()
+    poolAccount.staked = BigInt.zero()
+    poolAccount.rewards = BigInt.zero()
+    poolAccount.rewardPerTokenPaid = BigInt.zero()
+    poolAccount.save()
+    return poolAccount as PoolAccount
   }
 
-  accountPool.deposited = accountPool.deposited.plus(deposited)
-  accountPool.staked = accountPool.staked.plus(staked)
+  return poolAccount as PoolAccount
+}
 
-  if (rewardContractAddress) {
-    let poolContract = BaseRewardPool.bind(rewardContractAddress)
-    accountPool.userRewardPerTokenPaid = poolContract.userRewardPerTokenPaid(accountAddress)
-    accountPool.rewards = poolContract.rewards(accountAddress)
-    accountPool.lastUpdatedTimestamp = timestamp
+export function updatePoolAccountRewards(
+  poolAccount: PoolAccount,
+  pool: Pool,
+): void {
+  let rewardPoolContract = BaseRewardPool.bind(
+    Address.fromBytes(pool.rewardPool),
+  )
+
+  let address = Address.fromString(poolAccount.account)
+
+  poolAccount.rewards = rewardPoolContract.rewards(address)
+  poolAccount.rewardPerTokenPaid =
+    rewardPoolContract.userRewardPerTokenPaid(address)
+}
+
+export function getAuraLockerAccount(address: Address): AuraLockerAccount {
+  let account = getAccount(address)
+
+  let id = account.id
+  let auraLockerAccount = AuraLockerAccount.load(id)
+
+  if (auraLockerAccount == null) {
+    auraLockerAccount = new AuraLockerAccount(id)
+    auraLockerAccount.account = account.id
+    auraLockerAccount.lastUpdateTime = 0
+    auraLockerAccount.rewardPerTokenPaid = BigInt.zero()
+    auraLockerAccount.periodFinish = 0
+    auraLockerAccount.balanceNextUnlockIndex = 0
+    auraLockerAccount.balanceLocked = BigInt.zero()
+    auraLockerAccount.rewardRate = BigInt.zero()
+    auraLockerAccount.save()
+    return auraLockerAccount as AuraLockerAccount
   }
 
-  accountPool.save()
+  return auraLockerAccount as AuraLockerAccount
+}
+
+export function updateAuraLockerAccount(
+  address: Address,
+  locker: Address,
+): void {
+  let contract = AuraLocker.bind(locker)
+  let auraLockerAccount = getAuraLockerAccount(address)
+
+  auraLockerAccount.balance = contract.balanceOf(address)
+  auraLockerAccount.auraLocker = 'auraLocker'
+
+  let balancesResult = contract.balances(address)
+  auraLockerAccount.balanceLocked = balancesResult.value0
+  auraLockerAccount.balanceNextUnlockIndex = balancesResult.value1.toI32()
+
+  let lockedBalancesResult = contract.lockedBalances(address)
+  for (let i = 0; i++; i < lockedBalancesResult.value3.length) {
+    let lockedBalance = lockedBalancesResult.value3[i]
+    let userLockId = auraLockerAccount.id + '.' + i.toString()
+    let userLock = AuraLockerUserLock.load(userLockId)
+    if (userLock == null) {
+      userLock = new AuraLockerUserLock(userLockId)
+      userLock.auraLockerAccount = auraLockerAccount.id
+    }
+    userLock.amount = lockedBalance.amount
+    userLock.unlockTime = lockedBalance.unlockTime.toI32()
+    userLock.save()
+  }
+
+  let rewardDataResult = contract.rewardData(address)
+  auraLockerAccount.periodFinish = rewardDataResult.value0.toI32()
+  auraLockerAccount.lastUpdateTime = rewardDataResult.value1.toI32()
+  auraLockerAccount.rewardRate = rewardDataResult.value2
+  auraLockerAccount.rewardPerTokenPaid = rewardDataResult.value3
+
+  auraLockerAccount.save()
+
+  for (let i = 0; i++; i < 255) {
+    let rewardTokenResult = contract.try_rewardTokens(BigInt.fromI32(i))
+
+    if (
+      rewardTokenResult.reverted ||
+      rewardTokenResult.value == Address.zero()
+    ) {
+      break
+    }
+
+    let userDataResult = contract.userData(address, rewardTokenResult.value)
+
+    let rewardToken = getToken(rewardTokenResult.value)
+
+    let userDataId = auraLockerAccount.id + '.' + rewardToken.id
+    let userData = AuraLockerUserData.load(userDataId)
+
+    if (userData == null) {
+      userData = new AuraLockerUserData(userDataId)
+      userData.auraLockerAccount = auraLockerAccount.id
+      userData.token = rewardToken.id
+    }
+
+    userData.rewards = userDataResult.value0
+    userData.rewardPerTokenPaid = userDataResult.value1
+
+    userData.save()
+  }
 }

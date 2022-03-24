@@ -1,34 +1,272 @@
-type Pool @entity {
-  id: ID!
-  token: Token
-  lpToken: Token
-  deposited: BigDecimal!
-  staked: BigDecimal!
-  accounts: [AccountPool!]! @derivedFrom(field: "pool")
+interface RewardData {
+  token: Token!
 
-  rewardPool: Bytes
-  rewardsLastUpdated: Int!
+  """
+  Timestamp for current period finish
+  """
+  periodFinish: Int!
+
+  """
+  Last time any user took action
+  """
+  lastUpdateTime: Int!
+
+  """
+  RewardRate for the rest of the period
+  """
+  rewardRate: BigInt!
+
+  """
+  Ever increasing rewardPerToken rate, based on % of total supply
+  """
   rewardPerTokenStored: BigInt!
 }
 
 type Account @entity {
+  """
+  Address
+  """
   id: ID!
-  pools: [AccountPool!]! @derivedFrom(field: "account")
+
+  poolAccounts: [PoolAccount!]! @derivedFrom(field: "account")
+
+  auraLockerAccount: AuraLockerAccount
 }
 
-type AccountPool @entity {
+type AuraLockerAccount @entity {
+  """
+  {Account.id}
+  """
   id: ID!
+
   account: Account!
-  pool: Pool!
-  deposited: BigDecimal!
-  staked: BigDecimal!
-  userRewardPerTokenPaid: BigInt!
+
+  auraLocker: AuraLocker!
+
+  balance: BigInt!
+
+  """
+  AuraLocker.balances(account)
+  """
+  balanceLocked: BigInt!
+  balanceNextUnlockIndex: Int!
+
+  """
+  AuraLocker.rewardData(account)
+  """
+  periodFinish: Int!
+  lastUpdateTime: Int!
+  rewardRate: BigInt!
+  rewardPerTokenPaid: BigInt!
+
+  """
+  AuraLocker.userLocks(account)
+  """
+  userLocks: [AuraLockerUserLock!]! @derivedFrom(field: "auraLockerAccount")
+
+  """
+  AuraLocker.userData(account)
+  """
+  userData: [AuraLockerUserData!]! @derivedFrom(field: "auraLockerAccount")
+}
+
+type AuraLockerUserLock @entity {
+  """
+  {AuraLockerAccount.id}.{index}
+  """
+  id: ID!
+
+  auraLockerAccount: AuraLockerAccount!
+
+  amount: BigInt!
+
+  unlockTime: Int!
+}
+
+type AuraLockerUserData @entity {
+  """
+  {AuraLockerAccount.id}.{Token.id}
+  """
+  id: ID!
+
+  auraLockerAccount: AuraLockerAccount!
+
+  token: ID!
+
   rewards: BigInt!
-  lastUpdatedTimestamp: Int!
+
+  rewardPerTokenPaid: BigInt!
+}
+
+type PoolAccount @entity {
+  """
+  {Pool.id}.{Account.id}
+  """
+  id: ID!
+
+  account: Account!
+
+  pool: Pool!
+
+  """
+  depositToken.balanceOf(account)
+  """
+  balance: BigInt!
+
+  """
+  rewardsPool.balanceOf(account)
+  i.e. the account's staked LP tokens
+  """
+  staked: BigInt!
+
+  """
+  rewards(account)
+  """
+  rewards: BigInt!
+
+  """
+  userRewardPerTokenPaid(account)
+  """
+  rewardPerTokenPaid: BigInt!
+}
+
+type PoolRewardData implements RewardData @entity {
+  """
+  {pool.id}.{token.id}
+  """
+  id: ID!
+
+  token: Token!
+
+  periodFinish: Int!
+
+  lastUpdateTime: Int!
+
+  rewardRate: BigInt!
+
+  rewardPerTokenStored: BigInt!
+
+  pool: Pool!
+}
+
+type Pool @entity {
+  """
+  Pool ID (pid)
+  """
+  id: ID!
+
+  """
+  The Aura deposit token; a 1:1 token representing an LP deposit.
+  - Factory pools    => an auraLP token
+  - auraBAL staking  => auraBAL
+  """
+  depositToken: Token!
+
+  """
+  LP Token refers to:
+  - Factory pools    => e.g. a given BPT
+  - auraBAL staking  => BAL
+  """
+  lpToken: Token!
+
+  """
+  Total supply of the depositToken
+  """
+  totalSupply: BigInt!
+
+  """
+  Total staked in the rewardPool
+  """
+  totalStaked: BigInt!
+
+  """
+  BaseRewardPool (for factory pools)
+  """
+  rewardPool: Bytes!
+
+  isFactoryPool: Boolean!
+
+  factoryPoolData: FactoryPoolData
+
+  """
+  List of rewards per-token
+  """
+  rewardData: [PoolRewardData!]! @derivedFrom(field: "pool")
+
+  accounts: [PoolAccount!]! @derivedFrom(field: "pool")
+}
+
+type FactoryPoolData @entity {
+  """
+  {pool.id}
+  """
+  id: ID!
+
+  pool: Pool!
+
+  gauge: Bytes!
+
+  stash: Bytes!
+
+  isShutdown: Boolean!
+}
+
+type Global @entity {
+  """
+  Singleton: "global"
+  """
+  id: ID!
+
+  auraBalMaxSupply: BigInt!
+
+  auraBalReductionPerCliff: BigInt!
+
+  auraBalTotalCliffs: BigInt!
+}
+
+type AuraLocker @entity {
+  """
+  Singleton: "AuraLocker"
+  """
+  id: ID!
+
+  address: Bytes!
+
+  totalLocked: BigInt!
+
+  accounts: [AuraLockerAccount!]! @derivedFrom(field: "auraLocker")
+
+  rewardData: [AuraLockerRewardData!]! @derivedFrom(field: "auraLocker")
+}
+
+type AuraLockerRewardData implements RewardData @entity {
+  """
+  {token.id}
+  """
+  id: ID!
+
+  token: Token!
+
+  periodFinish: Int!
+
+  lastUpdateTime: Int!
+
+  rewardRate: BigInt!
+
+  rewardPerTokenStored: BigInt!
+
+  auraLocker: AuraLocker!
 }
 
 type Token @entity {
+  """
+  Address
+  """
   id: ID!
+
+  decimals: Int!
+
   symbol: String!
+
   name: String!
 }

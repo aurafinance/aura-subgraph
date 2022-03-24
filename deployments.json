@@ -8,9 +8,13 @@
   },
   "rinkeby": {
     "network": "rinkeby",
+    "AuraLocker": {
+      "address": "0x2E05Cef94C259b6092E14f631Eb20094f7DDDC63",
+      "startBlock": 10370614
+    },
     "Booster": {
-      "address": "0x0DACcE714D0dDD2f78f406752f5aBbAAd1D20062",
-      "startBlock": 10269503
+      "address": "0xF3BA38823F5bf8C315c747861539eE27081357Cb",
+      "startBlock": 10370598
     }
   },
   "kovan": {

@@ -5,17 +5,26 @@
     "prepare:rinkeby": "node ./prepare.js rinkeby",
     "prepare:kovan": "node ./prepare.js kovan",
     "prepare:mainnet": "node ./prepare.js mainnet",
+    "schema:rinkeby": "get-graphql-schema https://api.thegraph.com/subgraphs/name/0xbutterfield/aura-rinkeby > schema/deployed-schema.graphql",
     "codegen": "graph codegen",
     "build": "graph build",
     "auth": "graph auth --product hosted-service",
+    "deploy:rinkeby": "graph deploy --product hosted-service 0xbutterfield/aura-rinkeby",
     "deploy:staging": "graph deploy --product hosted-service 0xbutterfield/aura-staging",
     "create-local": "graph create --node http://localhost:8020/ oxbutterfield/aura-testnet",
     "remove-local": "graph remove --node http://localhost:8020/ oxbutterfield/aura-testnet",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 oxbutterfield/aura-testnet"
   },
+  "prettier": {
+    "trailingComma": "all",
+    "semi": false,
+    "singleQuote": true
+  },
   "dependencies": {
     "@graphprotocol/graph-cli": "^0.28.0",
     "@graphprotocol/graph-ts": "^0.26.0",
-    "mustache": "^4.2.0"
+    "get-graphql-schema": "^2.1.2",
+    "mustache": "^4.2.0",
+    "prettier": "^2.6.0"
   }
 }
