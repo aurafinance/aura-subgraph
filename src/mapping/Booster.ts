@@ -119,9 +119,9 @@ export function handleRewardContractsUpdated(
 
     {
       let global = new Global('global')
-      global.auraBalTotalCliffs = BigInt.zero()
-      global.auraBalReductionPerCliff = BigInt.zero()
-      global.auraBalMaxSupply = BigInt.zero()
+      global.auraTotalCliffs = BigInt.zero()
+      global.auraReductionPerCliff = BigInt.zero()
+      global.auraMaxSupply = BigInt.zero()
       global.save()
     }
   }

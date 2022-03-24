@@ -217,11 +217,11 @@ type Global @entity {
   """
   id: ID!
 
-  auraBalMaxSupply: BigInt!
+  auraMaxSupply: BigInt!
 
-  auraBalReductionPerCliff: BigInt!
+  auraReductionPerCliff: BigInt!
 
-  auraBalTotalCliffs: BigInt!
+  auraTotalCliffs: BigInt!
 }
 
 type AuraLocker @entity {
