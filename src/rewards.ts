@@ -1,7 +1,6 @@
-import { Address, log } from '@graphprotocol/graph-ts'
+import { Address } from '@graphprotocol/graph-ts'
 
-import { PoolRewardData, Pool, AuraLocker } from '../generated/schema'
-import { AuraLocker as AuraLockerContract } from '../generated/templates/AuraLocker/AuraLocker'
+import { PoolRewardData, Pool } from '../generated/schema'
 import { BaseRewardPool } from '../generated/templates/BaseRewardPool/BaseRewardPool'
 import { getToken } from './tokens'
 

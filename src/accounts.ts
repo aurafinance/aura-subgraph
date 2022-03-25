@@ -8,7 +8,7 @@ import {
   AuraLockerUserLock,
   Pool,
 } from '../generated/schema'
-import { AuraLocker } from '../generated/templates/AuraLocker/AuraLocker'
+import { AuraLocker } from '../generated/AuraLocker/AuraLocker'
 import { BaseRewardPool } from '../generated/templates/BaseRewardPool/BaseRewardPool'
 import { getToken } from './tokens'
 
