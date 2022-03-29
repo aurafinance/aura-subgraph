@@ -19,9 +19,13 @@
   },
   "kovan": {
     "network": "kovan",
+    "AuraLocker": {
+      "address": "0xbD32D030433626Fac83ef9b592590E74269C364E",
+      "startBlock": 30704053
+    },
     "Booster": {
-      "address": "NOT_DEPLOYED",
-      "startBlock": 9999999999
+      "address": "0x254c0130b259e36CA01ce345e29978a09f6d53d2",
+      "startBlock": 30703989
     }
   }
 }

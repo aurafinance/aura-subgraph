@@ -1,8 +1,8 @@
-name: Deploy Subgraph (Rinkeby)
+name: Deploy Subgraph (Kovan)
 
 on:
   push:
-    branches: ["rinkeby"]
+    branches: ["main"]
 
 jobs:
   deploy:
@@ -16,7 +16,7 @@ jobs:
       - name: Install
         run: yarn --frozen-lockfile
       - name: Prepare
-        run: yarn prepare:rinkeby
+        run: yarn prepare:kovan
       - name: Codegen
         run: yarn codegen
       - name: Build
@@ -24,7 +24,7 @@ jobs:
       - uses: gtaschuk/graph-deploy@v0.1.0
         with:
           graph_access_token: ${{secrets.GRAPH_ACCESS_TOKEN}}
-          graph_subgraph_name: "aura-rinkeby"
+          graph_subgraph_name: "aura-kovan"
           graph_deploy_studio: "false"
           graph_account: "0xbutterfield"
           graph_config_file: "subgraph.yaml"

@@ -1,22 +1,12 @@
 import { DataSourceContext } from '@graphprotocol/graph-ts'
 import {
   AccessChanged,
-  ActiveRewardAdded,
-  ActiveRewardRemoved,
   RewardPoolCreated,
   TokenRewardPoolCreated,
 } from '../../generated/templates/RewardFactory/RewardFactory'
 import { BaseRewardPool } from '../../generated/templates'
 
 export function handleAccessChanged(event: AccessChanged): void {
-  // TODO
-}
-
-export function handleActiveRewardAdded(event: ActiveRewardAdded): void {
-  // TODO
-}
-
-export function handleActiveRewardRemoved(event: ActiveRewardRemoved): void {
   // TODO
 }
 
