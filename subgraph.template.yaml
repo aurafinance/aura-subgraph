@@ -35,8 +35,8 @@ dataSources:
           file: ./abis/ERC20.json
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
-        - name: CvxStakingProxy
-          file: ./abis/CvxStakingProxy.json
+        - name: AuraStakingProxy
+          file: ./abis/AuraStakingProxy.json
       eventHandlers:
         - event: ArbitratorUpdated(address)
           handler: handleArbitratorUpdated
@@ -100,8 +100,8 @@ dataSources:
           file: ./abis/ERC20.json
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
-        - name: CvxStakingProxy
-          file: ./abis/CvxStakingProxy.json
+        - name: AuraStakingProxy
+          file: ./abis/AuraStakingProxy.json
       eventHandlers:
         - event: DelegateChanged(indexed address,indexed address,indexed address)
           handler: handleDelegateChanged
@@ -139,8 +139,6 @@ templates:
       language: wasm/assemblyscript
       entities:
         - AccessChanged
-        - ActiveRewardAdded
-        - ActiveRewardRemoved
         - RewardPoolCreated
         - TokenRewardPoolCreated
       abis:
@@ -149,10 +147,6 @@ templates:
       eventHandlers:
         - event: AccessChanged(address,bool)
           handler: handleAccessChanged
-        - event: ActiveRewardAdded(address,uint256)
-          handler: handleActiveRewardAdded
-        - event: ActiveRewardRemoved(address,uint256)
-          handler: handleActiveRewardRemoved
         - event: RewardPoolCreated(address,uint256,address)
           handler: handleRewardPoolCreated
         - event: TokenRewardPoolCreated(address,address,address,address)
