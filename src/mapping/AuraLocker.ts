@@ -1,4 +1,4 @@
-import { Address } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 import {
   DelegateChanged,
@@ -25,11 +25,19 @@ function getLocker(address: Address): AuraLocker {
   if (locker == null) {
     locker = new AuraLocker(id)
     locker.address = address
+    locker.lockedSupply = BigInt.zero()
+    locker.totalSupply = BigInt.zero()
     locker.save()
     return locker as AuraLocker
   }
 
   return locker as AuraLocker
+}
+
+function updateLocker(locker: AuraLocker): void {
+  let contract = AuraLockerContract.bind(Address.fromBytes(locker.address))
+  locker.lockedSupply = contract.lockedSupply()
+  locker.totalSupply = contract.totalSupply()
 }
 
 function updateAuraLockerRewardData(
@@ -108,11 +116,15 @@ export function handleShutdown(event: Shutdown): void {
 export function handleStaked(event: Staked): void {
   let locker = getLocker(event.address)
   updateAuraLockerAccount(event.params._user, event.address)
+  updateLocker(locker)
+  locker.save()
   // TODO
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
   let locker = getLocker(event.address)
   updateAuraLockerAccount(event.params._user, event.address)
+  updateLocker(locker)
+  locker.save()
   // TODO
 }
