@@ -217,6 +217,10 @@ type Global @entity {
   """
   id: ID!
 
+  aura: Bytes!
+
+  auraTotalSupply: BigInt!
+
   auraMaxSupply: BigInt!
 
   auraReductionPerCliff: BigInt!
@@ -232,7 +236,9 @@ type AuraLocker @entity {
 
   address: Bytes!
 
-  totalLocked: BigInt!
+  totalSupply: BigInt!
+
+  lockedSupply: BigInt!
 
   accounts: [AuraLockerAccount!]! @derivedFrom(field: "auraLocker")
 

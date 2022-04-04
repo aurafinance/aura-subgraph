@@ -18,6 +18,7 @@ import {
   Withdrawn,
 } from '../../generated/Booster/Booster'
 import { BaseRewardPool as BaseRewardPoolContract } from '../../generated/Booster/BaseRewardPool'
+import { AuraToken } from '../../generated/Booster/AuraToken'
 import { RewardFactory, BaseRewardPool } from '../../generated/templates'
 import { FactoryPoolData, Global, Pool } from '../../generated/schema'
 
@@ -118,10 +119,14 @@ export function handleRewardContractsUpdated(
     BaseRewardPool.createWithContext(event.params.lockRewards, context)
 
     {
+      let aura = boosterContract.minter()
+      let auraTokenContract = AuraToken.bind(aura)
       let global = new Global('global')
-      global.auraTotalCliffs = BigInt.zero()
-      global.auraReductionPerCliff = BigInt.zero()
-      global.auraMaxSupply = BigInt.zero()
+      global.aura = aura
+      global.auraTotalCliffs = auraTokenContract.totalCliffs()
+      global.auraReductionPerCliff = auraTokenContract.reductionPerCliff()
+      global.auraMaxSupply = auraTokenContract.EMISSIONS_MAX_SUPPLY()
+      global.auraTotalSupply = auraTokenContract.totalSupply()
       global.save()
     }
   }

@@ -1,4 +1,4 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, log } from '@graphprotocol/graph-ts'
 
 import {
   Account,
@@ -98,7 +98,7 @@ export function updateAuraLockerAccount(
   auraLockerAccount.balanceNextUnlockIndex = balancesResult.value1.toI32()
 
   let lockedBalancesResult = contract.lockedBalances(address)
-  for (let i = 0; i++; i < lockedBalancesResult.value3.length) {
+  for (let i = 0; i < lockedBalancesResult.value3.length; i++) {
     let lockedBalance = lockedBalancesResult.value3[i]
     let userLockId = auraLockerAccount.id + '.' + i.toString()
     let userLock = AuraLockerUserLock.load(userLockId)
@@ -119,7 +119,7 @@ export function updateAuraLockerAccount(
 
   auraLockerAccount.save()
 
-  for (let i = 0; i++; i < 255) {
+  for (let i = 0; i < 255; i++) {
     let rewardTokenResult = contract.try_rewardTokens(BigInt.fromI32(i))
 
     if (
