@@ -37,6 +37,8 @@ dataSources:
           file: ./abis/BaseRewardPool.json
         - name: AuraStakingProxy
           file: ./abis/AuraStakingProxy.json
+        - name: AuraToken
+          file: ./abis/AuraToken.json
       eventHandlers:
         - event: ArbitratorUpdated(address)
           handler: handleArbitratorUpdated
@@ -126,6 +128,29 @@ dataSources:
         - event: Withdrawn(indexed address,uint256,bool)
           handler: handleWithdrawn
       file: ./src/mapping/AuraLocker.ts
+
+  - kind: ethereum
+    name: AuraToken
+    network: '{{network}}'
+    source:
+      address: '{{AuraToken.address}}'
+      abi: AuraToken
+      startBlock: {{AuraToken.startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Transfer
+      abis:
+        - name: AuraToken
+          file: ./abis/AuraToken.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mapping/AuraToken.ts
 
 templates:
   - kind: ethereum

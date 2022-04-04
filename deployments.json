@@ -23,6 +23,10 @@
       "address": "0xbD32D030433626Fac83ef9b592590E74269C364E",
       "startBlock": 30704053
     },
+    "AuraToken": {
+      "address": "0x60cd2522a5EE7e90006C9129FaD3c5141cA47E06",
+      "startBlock": 30703980
+    },
     "Booster": {
       "address": "0x254c0130b259e36CA01ce345e29978a09f6d53d2",
       "startBlock": 30703989
