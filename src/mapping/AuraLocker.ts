@@ -23,6 +23,9 @@ function getLocker(address: Address): AuraLocker {
   let locker = AuraLocker.load(id)
 
   if (locker == null) {
+    let contract = AuraLockerContract.bind(Address.fromBytes(address))
+    getToken(contract.stakingToken())
+
     locker = new AuraLocker(id)
     locker.address = address
     locker.lockedSupply = BigInt.zero()
