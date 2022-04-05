@@ -91,7 +91,7 @@ type AuraLockerUserData @entity {
 
   auraLockerAccount: AuraLockerAccount!
 
-  token: ID!
+  token: Token!
 
   rewards: BigInt!
 
