@@ -1,14 +1,18 @@
 #!/bin/node
 
-const Mustache = require('mustache')
-const deployments = require('./deployments.json')
-const fs = require('fs')
+import Mustache from 'mustache'
+import fs from 'fs'
+
+const deployments = JSON.parse(fs.readFileSync('./deployments.json'))
 
 const [networkName] = process.argv.slice(2)
 
 if (!deployments[networkName]) {
-    throw new Error(`Network ${networkName} not found`)
+  throw new Error(`Network ${networkName} not found`)
 }
 
 const template = fs.readFileSync('./subgraph.template.yaml', 'utf8')
-fs.writeFileSync('./subgraph.yaml', Mustache.render(template, deployments[networkName]))
+fs.writeFileSync(
+  './subgraph.yaml',
+  Mustache.render(template, deployments[networkName]),
+)
