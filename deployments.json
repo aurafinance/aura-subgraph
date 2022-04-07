@@ -20,16 +20,16 @@
   "kovan": {
     "network": "kovan",
     "AuraLocker": {
-      "address": "0xbD32D030433626Fac83ef9b592590E74269C364E",
-      "startBlock": 30704053
+      "address": "0x4890af9a0DF624AaCaF8537F6F9caC56A723cb2F",
+      "startBlock": 30847788
     },
     "AuraToken": {
-      "address": "0x60cd2522a5EE7e90006C9129FaD3c5141cA47E06",
-      "startBlock": 30703980
+      "address": "0xfA0C33c6BAeFE4a41F68039d24CA116a4E4B49DE",
+      "startBlock": 30847731
     },
     "Booster": {
-      "address": "0x254c0130b259e36CA01ce345e29978a09f6d53d2",
-      "startBlock": 30703989
+      "address": "0xAF4AAf0559187aBd973dD60d2F44513aF3a2490d",
+      "startBlock": 30847737
     }
   }
 }

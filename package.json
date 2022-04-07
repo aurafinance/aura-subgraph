@@ -1,7 +1,9 @@
 {
-  "name": "aura-testnet",
+  "name": "aura-subgraph",
   "license": "UNLICENSED",
+  "type": "module",
   "scripts": {
+    "copy-abis": "node ./copy-abis.js",
     "prepare:rinkeby": "node ./prepare.js rinkeby",
     "prepare:kovan": "node ./prepare.js kovan",
     "prepare:mainnet": "node ./prepare.js mainnet",
@@ -26,6 +28,7 @@
     "@graphprotocol/graph-cli": "^0.28.0",
     "@graphprotocol/graph-ts": "^0.26.0",
     "get-graphql-schema": "^2.1.2",
+    "globby": "^13.1.1",
     "mustache": "^4.2.0",
     "prettier": "^2.6.0"
   }
