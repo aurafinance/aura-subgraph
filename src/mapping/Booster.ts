@@ -127,6 +127,8 @@ export function handleRewardContractsUpdated(
       global.auraReductionPerCliff = auraTokenContract.reductionPerCliff()
       global.auraMaxSupply = auraTokenContract.EMISSIONS_MAX_SUPPLY()
       global.auraTotalSupply = auraTokenContract.totalSupply()
+      global.auraMinterMinted = BigInt.zero()
+      global.auraMinter = auraTokenContract.minter()
       global.save()
     }
   }

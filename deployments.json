@@ -27,6 +27,10 @@
       "address": "0xfA0C33c6BAeFE4a41F68039d24CA116a4E4B49DE",
       "startBlock": 30847731
     },
+    "AuraBalRewardPool": {
+      "address": "0xe66f0579Fb7FCccED6e18E9a0e610493811Bfe79",
+      "startBlock": 30847955
+    },
     "Booster": {
       "address": "0xAF4AAf0559187aBd973dD60d2F44513aF3a2490d",
       "startBlock": 30847737
