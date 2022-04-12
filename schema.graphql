@@ -52,14 +52,6 @@ type AuraLockerAccount @entity {
   balanceNextUnlockIndex: Int!
 
   """
-  AuraLocker.rewardData(account)
-  """
-  periodFinish: Int!
-  lastUpdateTime: Int!
-  rewardRate: BigInt!
-  rewardPerTokenPaid: BigInt!
-
-  """
   AuraLocker.userLocks(account)
   """
   userLocks: [AuraLockerUserLock!]! @derivedFrom(field: "auraLockerAccount")
@@ -194,6 +186,11 @@ type Pool @entity {
   rewardData: [PoolRewardData!]! @derivedFrom(field: "pool")
 
   accounts: [PoolAccount!]! @derivedFrom(field: "pool")
+
+  """
+  auraBal initial staking only
+  """
+  startTime: Int
 }
 
 type FactoryPoolData @entity {
@@ -226,6 +223,10 @@ type Global @entity {
   auraReductionPerCliff: BigInt!
 
   auraTotalCliffs: BigInt!
+
+  auraMinterMinted: BigInt!
+
+  auraMinter: Bytes!
 }
 
 type AuraLocker @entity {

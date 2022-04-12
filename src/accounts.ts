@@ -1,4 +1,4 @@
-import { Address, BigInt, log } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
 
 import {
   Account,
@@ -70,12 +70,8 @@ export function getAuraLockerAccount(address: Address): AuraLockerAccount {
   if (auraLockerAccount == null) {
     auraLockerAccount = new AuraLockerAccount(id)
     auraLockerAccount.account = account.id
-    auraLockerAccount.lastUpdateTime = 0
-    auraLockerAccount.rewardPerTokenPaid = BigInt.zero()
-    auraLockerAccount.periodFinish = 0
     auraLockerAccount.balanceNextUnlockIndex = 0
     auraLockerAccount.balanceLocked = BigInt.zero()
-    auraLockerAccount.rewardRate = BigInt.zero()
     auraLockerAccount.save()
     return auraLockerAccount as AuraLockerAccount
   }
@@ -111,12 +107,6 @@ export function updateAuraLockerAccount(
     userLock.save()
   }
 
-  let rewardDataResult = contract.rewardData(address)
-  auraLockerAccount.periodFinish = rewardDataResult.value0.toI32()
-  auraLockerAccount.lastUpdateTime = rewardDataResult.value1.toI32()
-  auraLockerAccount.rewardRate = rewardDataResult.value2
-  auraLockerAccount.rewardPerTokenPaid = rewardDataResult.value3
-
   auraLockerAccount.save()
 
   for (let i = 0; i < 255; i++) {
@@ -142,8 +132,8 @@ export function updateAuraLockerAccount(
       userData.token = rewardToken.id
     }
 
-    userData.rewards = userDataResult.value0
-    userData.rewardPerTokenPaid = userDataResult.value1
+    userData.rewardPerTokenPaid = userDataResult.value0
+    userData.rewards = userDataResult.value1
 
     userData.save()
   }

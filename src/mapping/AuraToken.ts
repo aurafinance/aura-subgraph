@@ -12,5 +12,10 @@ export function handleTransfer(event: Transfer): void {
   } else if (event.params.from.equals(Address.zero())) {
     global.auraTotalSupply = global.auraTotalSupply.plus(event.params.value)
   }
+
+  if (event.params.to.equals(global.auraMinter)) {
+    global.auraMinterMinted = global.auraMinterMinted.plus(event.params.value)
+  }
+
   global.save()
 }
