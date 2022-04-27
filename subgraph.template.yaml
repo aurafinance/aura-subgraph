@@ -184,6 +184,38 @@ dataSources:
           handler: handleRewardPaid
       file: ./src/mapping/AuraBalRewardPool.ts
 
+  {{#AuraMerkleDrops}}
+  - kind: ethereum
+    name: '{{name}}'
+    network: '{{network}}'
+    source:
+      abi: AuraMerkleDrop
+      address: '{{address}}'
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Claimed
+        - DaoSet
+        - ExpiredWithdrawn
+        - LockerSet
+        - PenaltyForwarded
+        - RootSet
+        - StartedEarly
+      abis:
+        - name: AuraMerkleDrop
+          file: ./abis/AuraMerkleDrop.json
+      eventHandlers:
+        - event: Claimed(address,uint256,bool)
+          handler: handleClaimed
+        - event: RootSet(bytes32)
+          handler: handleRootSet
+        - event: StartedEarly()
+          handler: handleStartedEarly
+      file: ./src/mapping/AuraMerkleDrop.ts
+  {{/AuraMerkleDrops}}
 
 templates:
   - kind: ethereum
