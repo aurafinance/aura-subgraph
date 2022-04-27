@@ -31,6 +31,8 @@ type Account @entity {
   poolAccounts: [PoolAccount!]! @derivedFrom(field: "account")
 
   auraLockerAccount: AuraLockerAccount
+
+  merkleDropClaims: [MerkleDropClaim!]! @derivedFrom(field: "account")
 }
 
 type AuraLockerAccount @entity {
@@ -276,4 +278,34 @@ type Token @entity {
   symbol: String!
 
   name: String!
+}
+
+type MerkleDrop @entity {
+  """
+  Address
+  """
+  id: ID!
+
+  merkleRoot: Bytes!
+
+  startTime: Int!
+
+  expiryTime: Int!
+
+  claims: [MerkleDropClaim!]! @derivedFrom(field: "merkleDrop")
+}
+
+type MerkleDropClaim @entity {
+  """
+  {merkleDrop.id}.{account.id}
+  """
+  id: ID!
+
+  account: Account!
+
+  merkleDrop: MerkleDrop!
+
+  amount: BigInt!
+
+  locked: Boolean!
 }

@@ -34,6 +34,18 @@
     "Booster": {
       "address": "0xAF4AAf0559187aBd973dD60d2F44513aF3a2490d",
       "startBlock": 30847737
-    }
+    },
+    "AuraMerkleDrops": [
+      {
+        "name": "BalancerMerkleDrop",
+        "address": "0xbe227b7851570a9f5adfb923e9a2d4583eb6630f",
+        "startBlock": 30848008
+      },
+      {
+        "name": "ConvexMerkleDrop",
+        "address": "0xec1a6e61f7c4864cf8bfcf5bceefee6259d6a2b6",
+        "startBlock": 30848016
+      }
+    ]
   }
 }
