@@ -24,6 +24,10 @@
       "address": "0xAF4AAf0559187aBd973dD60d2F44513aF3a2490d",
       "startBlock": 30847737
     },
+    "ConvexMasterChef": {
+      "address": "0x0422a859FeCF2576e2201209AE02eFff916AfCF4",
+      "startBlock": 30847991
+    },
     "AuraMerkleDrops": [
       {
         "name": "BalancerMerkleDrop",
