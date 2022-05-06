@@ -345,6 +345,8 @@ type MasterChefPoolInfo @entity {
 
   rewarder: Bytes!
 
+  lpSupply: BigInt!
+
   masterChef: MasterChef!
 
   userInfos: [MasterChefUserInfo!]! @derivedFrom(field: "poolInfo")
