@@ -4,6 +4,7 @@ import {
   Deposit,
   EmergencyWithdraw,
   Withdraw,
+  RewardPaid,
 } from '../../generated/ConvexMasterChef/ConvexMasterChef'
 import {
   Account,
@@ -13,6 +14,7 @@ import {
 } from '../../generated/schema'
 import { getAccount } from '../accounts'
 import { getToken } from '../tokens'
+import { ERC20 } from '../../generated/ConvexMasterChef/ERC20'
 
 function getMasterChef(address: Address): MasterChef {
 
@@ -67,6 +69,7 @@ function getMasterChefPoolInfo(masterChef: MasterChef, pid: BigInt): MasterChefP
 
   poolInfo = new MasterChefPoolInfo(id)
   poolInfo.masterChef = masterChef.id
+  poolInfo.lpSupply = BigInt.zero()
   poolInfo.lpToken = getToken(poolInfoResult.value0).id
   poolInfo.allocPoint = poolInfoResult.value1
   poolInfo.lastRewardBlock = poolInfoResult.value2
@@ -78,13 +81,18 @@ function getMasterChefPoolInfo(masterChef: MasterChef, pid: BigInt): MasterChefP
 }
 
 function updatePool(masterChef: MasterChef, poolInfo: MasterChefPoolInfo): void {
-  let convexMasterChef = ConvexMasterChef.bind(Address.fromString(masterChef.id))
+  let address = Address.fromString(masterChef.id)
+
+  let convexMasterChef = ConvexMasterChef.bind(address)
   let poolInfoResult = convexMasterChef.poolInfo(BigInt.fromString(poolInfo.id))
   poolInfo.lpToken = getToken(poolInfoResult.value0).id
   poolInfo.allocPoint = poolInfoResult.value1
   poolInfo.lastRewardBlock = poolInfoResult.value2
   poolInfo.accCvxPerShare = poolInfoResult.value3
   poolInfo.rewarder = poolInfoResult.value4
+
+  let lpTokenContract = ERC20.bind(Address.fromString(poolInfo.lpToken))
+  poolInfo.lpSupply = lpTokenContract.balanceOf(address)
 }
 
 function updateUserInfo(masterChef: MasterChef, userInfo: MasterChefUserInfo): void {
@@ -95,10 +103,10 @@ function updateUserInfo(masterChef: MasterChef, userInfo: MasterChefUserInfo): v
   userInfo.rewardDebt = userInfoResult.value1
 }
 
-export function handleDeposit(event: Deposit): void {
-  let masterChef = getMasterChef(event.address)
-  let account = getAccount(event.params.user)
-  let poolInfo = getMasterChefPoolInfo(masterChef, event.params.pid)
+function updatePoolAndUser(address: Address, poolId: BigInt, userAddress: Address): void {
+  let masterChef = getMasterChef(address)
+  let account = getAccount(userAddress)
+  let poolInfo = getMasterChefPoolInfo(masterChef, poolId)
   let userInfo = getMasterChefUserInfo(masterChef, poolInfo, account)
 
   updatePool(masterChef, poolInfo)
@@ -109,24 +117,17 @@ export function handleDeposit(event: Deposit): void {
 }
 
 export function handleEmergencyWithdraw(event: EmergencyWithdraw): void {
-  let masterChef = getMasterChef(event.address)
-  let account = getAccount(event.params.user)
-  let poolInfo = getMasterChefPoolInfo(masterChef, event.params.pid)
-  let userInfo = getMasterChefUserInfo(masterChef, poolInfo, account)
-  userInfo.amount = BigInt.zero()
-  userInfo.rewardDebt = BigInt.zero()
-  userInfo.save()
+  updatePoolAndUser(event.address, event.params.pid, event.params.user)
+}
+
+export function handleDeposit(event: Deposit): void {
+  updatePoolAndUser(event.address, event.params.pid, event.params.user)
 }
 
 export function handleWithdraw(event: Withdraw): void {
-  let masterChef = getMasterChef(event.address)
-  let account = getAccount(event.params.user)
-  let poolInfo = getMasterChefPoolInfo(masterChef, event.params.pid)
-  let userInfo = getMasterChefUserInfo(masterChef, poolInfo, account)
+  updatePoolAndUser(event.address, event.params.pid, event.params.user)
+}
 
-  updatePool(masterChef, poolInfo)
-  poolInfo.save()
-
-  updateUserInfo(masterChef, userInfo)
-  userInfo.save()
+export function handleRewardPaid(event: RewardPaid): void {
+  updatePoolAndUser(event.address, event.params.pid, event.params.user)
 }
