@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "copy-abis": "node ./copy-abis.js",
+    "prepare:local": "node ./prepare.js local",
     "prepare:rinkeby": "node ./prepare.js rinkeby",
     "prepare:kovan": "node ./prepare.js kovan",
     "prepare:mainnet": "node ./prepare.js mainnet",
@@ -15,9 +16,9 @@
     "deploy:rinkeby": "graph deploy --product hosted-service 0xbutterfield/aura-rinkeby",
     "deploy:kovan": "graph deploy --product hosted-service 0xbutterfield/aura-kovan",
     "deploy:staging": "graph deploy --product hosted-service 0xbutterfield/aura-staging",
-    "create-local": "graph create --node http://localhost:8020/ oxbutterfield/aura-testnet",
-    "remove-local": "graph remove --node http://localhost:8020/ oxbutterfield/aura-testnet",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 oxbutterfield/aura-testnet"
+    "create-local": "graph create --node http://localhost:8020/ 0xbutterfield/aura-testnet",
+    "remove-local": "graph remove --node http://localhost:8020/ 0xbutterfield/aura-testnet",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 0xbutterfield/aura-testnet"
   },
   "prettier": {
     "trailingComma": "all",

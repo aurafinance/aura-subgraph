@@ -6,17 +6,6 @@
       "startBlock": 9999999999
     }
   },
-  "rinkeby": {
-    "network": "rinkeby",
-    "AuraLocker": {
-      "address": "0x2E05Cef94C259b6092E14f631Eb20094f7DDDC63",
-      "startBlock": 10370614
-    },
-    "Booster": {
-      "address": "0xF3BA38823F5bf8C315c747861539eE27081357Cb",
-      "startBlock": 10370598
-    }
-  },
   "kovan": {
     "network": "kovan",
     "AuraLocker": {
@@ -45,6 +34,37 @@
         "name": "ConvexMerkleDrop",
         "address": "0xec1a6e61f7c4864cf8bfcf5bceefee6259d6a2b6",
         "startBlock": 30848016
+      }
+    ]
+  },
+  "local": {
+    "network": "mainnet",
+    "AuraLocker": {
+      "address": "0x5d208cD54f5132f2BD0c1F1e8d8c864Bb6BEdc40",
+      "startBlock": 14679285
+    },
+    "AuraToken": {
+      "address": "0x665D01dBd89a0D1b693bb806fEea499b5359CF15",
+      "startBlock": 14679285
+    },
+    "AuraBalRewardPool": {
+      "address": "0x166D6e2c502f65e5D6A8D4BCBa9140fd4287CB5B",
+      "startBlock": 14679285
+    },
+    "Booster": {
+      "address": "0x59A5ccD34943CD0AdCf5ce703EE9F06889E13707",
+      "startBlock": 14679285
+    },
+    "AuraMerkleDrops": [
+      {
+        "name": "BalancerMerkleDrop",
+        "address": "0x0F0F94441FC40d40eCf65fa6c109533A66CB90c1",
+        "startBlock": 14679285
+      },
+      {
+        "name": "ConvexMerkleDrop",
+        "address": "0x76628A0103573DE2B8d18d21f713605Acf2B04A5",
+        "startBlock": 14679285
       }
     ]
   }
