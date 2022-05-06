@@ -184,6 +184,37 @@ dataSources:
           handler: handleRewardPaid
       file: ./src/mapping/AuraBalRewardPool.ts
 
+  - kind: ethereum
+    name: ConvexMasterChef
+    network: '{{network}}'
+    source:
+      abi: ConvexMasterChef
+      address: '{{ConvexMasterChef.address}}'
+      startBlock: {{ConvexMasterChef.startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Deposit
+        - EmergencyWithdraw
+        - Withdraw
+      abis:
+        - name: ConvexMasterChef
+          file: ./abis/ConvexMasterChef.json
+        - name: BaseRewardPool
+          file: ./abis/BaseRewardPool.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed uint256,uint256)
+          handler: handleDeposit
+        - event: EmergencyWithdraw(indexed address,indexed uint256,uint256)
+          handler: handleEmergencyWithdraw
+        - event: Withdraw(indexed address,indexed uint256,uint256)
+          handler: handleWithdraw
+      file: ./src/mapping/ConvexMasterChef.ts
+
   {{#AuraMerkleDrops}}
   - kind: ethereum
     name: '{{name}}'

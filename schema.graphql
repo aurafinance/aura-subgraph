@@ -309,3 +309,60 @@ type MerkleDropClaim @entity {
 
   locked: Boolean!
 }
+
+type MasterChef @entity {
+  """
+  Address
+  """
+  id: ID!
+
+  totalAllocPoint: BigInt!
+
+  startBlock: BigInt!
+
+  endBlock: BigInt!
+
+  rewardPerBlock: BigInt!
+
+  userInfos: [MasterChefUserInfo!]! @derivedFrom(field: "masterChef")
+
+  poolInfos: [MasterChefPoolInfo!]! @derivedFrom(field: "masterChef")
+}
+
+type MasterChefPoolInfo @entity {
+  """
+  Pool ID (pid)
+  """
+  id: ID!
+
+  lpToken: Token!
+
+  allocPoint: BigInt!
+
+  lastRewardBlock: BigInt!
+
+  accCvxPerShare: BigInt!
+
+  rewarder: Bytes!
+
+  masterChef: MasterChef!
+
+  userInfos: [MasterChefUserInfo!]! @derivedFrom(field: "poolInfo")
+}
+
+type MasterChefUserInfo @entity {
+  """
+  ${poolInfo.id}.${account.id}
+  """
+  id: ID!
+
+  amount: BigInt!
+
+  rewardDebt: BigInt!
+
+  account: Account!
+
+  poolInfo: MasterChefPoolInfo!
+
+  masterChef: MasterChef!
+}
