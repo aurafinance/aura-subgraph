@@ -30,12 +30,12 @@
     },
     "AuraMerkleDrops": [
       {
-        "name": "BalancerMerkleDrop",
+        "name": "initial",
         "address": "0xbe227b7851570a9f5adfb923e9a2d4583eb6630f",
         "startBlock": 30848008
       },
       {
-        "name": "ConvexMerkleDrop",
+        "name": "future",
         "address": "0xec1a6e61f7c4864cf8bfcf5bceefee6259d6a2b6",
         "startBlock": 30848016
       }
@@ -61,12 +61,12 @@
     },
     "AuraMerkleDrops": [
       {
-        "name": "BalancerMerkleDrop",
+        "name": "initial",
         "address": "0x0F0F94441FC40d40eCf65fa6c109533A66CB90c1",
         "startBlock": 14679285
       },
       {
-        "name": "ConvexMerkleDrop",
+        "name": "future",
         "address": "0x76628A0103573DE2B8d18d21f713605Acf2B04A5",
         "startBlock": 14679285
       }
