@@ -9,35 +9,35 @@
   "kovan": {
     "network": "kovan",
     "AuraLocker": {
-      "address": "0x4890af9a0DF624AaCaF8537F6F9caC56A723cb2F",
-      "startBlock": 30847788
+      "address": "0x117f8Ec16C00C9F321129651abBc4A38caD350D2",
+      "startBlock": 32052079
     },
     "AuraToken": {
-      "address": "0xfA0C33c6BAeFE4a41F68039d24CA116a4E4B49DE",
-      "startBlock": 30847731
+      "address": "0x16fe78B330B8C628DEA89344DB003a86B54Bb69d",
+      "startBlock": 32052022
     },
     "AuraBalRewardPool": {
-      "address": "0xe66f0579Fb7FCccED6e18E9a0e610493811Bfe79",
-      "startBlock": 30847955
+      "address": "0xB53e98B3A715c83C93313875504f16f7D4571504",
+      "startBlock": 32052055
     },
     "Booster": {
-      "address": "0xAF4AAf0559187aBd973dD60d2F44513aF3a2490d",
-      "startBlock": 30847737
+      "address": "0x40f346097e608A9A2a7cd5F431C08A16261C994F",
+      "startBlock": 32052028
     },
     "ConvexMasterChef": {
-      "address": "0x0422a859FeCF2576e2201209AE02eFff916AfCF4",
-      "startBlock": 30847991
+      "address": "0xa80DFc35d7f8BD2B6344752A3f5fdEe10673dD36",
+      "startBlock": 32052308
     },
     "AuraMerkleDrops": [
       {
         "name": "initial",
-        "address": "0xbe227b7851570a9f5adfb923e9a2d4583eb6630f",
-        "startBlock": 30848008
+        "address": "0xcB76B03B601428ecB891a6721Bb578B46F6224b5",
+        "startBlock": 32052324
       },
       {
         "name": "future",
-        "address": "0xec1a6e61f7c4864cf8bfcf5bceefee6259d6a2b6",
-        "startBlock": 30848016
+        "address": "0x7B8F993C8Aaf7F9c90D763ced764D51761B7aad1",
+        "startBlock": 32052332
       }
     ]
   },
