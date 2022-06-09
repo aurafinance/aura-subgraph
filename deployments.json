@@ -1,10 +1,38 @@
 {
   "mainnet": {
     "network": "mainnet",
+    "AuraLocker": {
+      "address": "0x3Fa73f1E5d8A792C80F426fc8F84FBF7Ce9bBCAC",
+      "startBlock": 14932220
+    },
+    "AuraToken": {
+      "address": "0xC0c293ce456fF0ED870ADd98a0828Dd4d2903DBF",
+      "startBlock": 14932168
+    },
+    "AuraBalRewardPool": {
+      "address": "0xC47162863a12227E5c3B0860715F9cF721651C0c",
+      "startBlock": 14932396
+    },
     "Booster": {
-      "address": "NOT_DEPLOYED",
-      "startBlock": 9999999999
-    }
+      "address": "0x7818A1DA7BD1E64c199029E86Ba244a9798eEE10",
+      "startBlock": 14932175
+    },
+    "ConvexMasterChef": {
+      "address": "0x1ab80F7Fb46B25b7e0B2cfAC23Fc88AC37aaf4e9",
+      "startBlock": 14932423
+    },
+    "AuraMerkleDrops": [
+      {
+        "name": "initial",
+        "address": "0x45EB1A004373b1D8457134A2C04a42d69D287724",
+        "startBlock": 14932435
+      },
+      {
+        "name": "future",
+        "address": "0x1a661CF8D8cd69dD2A423F3626A461A24280a8fB",
+        "startBlock": 14932441
+      }
+    ]
   },
   "kovan": {
     "network": "kovan",
