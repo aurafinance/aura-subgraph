@@ -68,36 +68,5 @@
         "startBlock": 32052332
       }
     ]
-  },
-  "local": {
-    "network": "mainnet",
-    "AuraLocker": {
-      "address": "0x5d208cD54f5132f2BD0c1F1e8d8c864Bb6BEdc40",
-      "startBlock": 14679285
-    },
-    "AuraToken": {
-      "address": "0x665D01dBd89a0D1b693bb806fEea499b5359CF15",
-      "startBlock": 14679285
-    },
-    "AuraBalRewardPool": {
-      "address": "0x166D6e2c502f65e5D6A8D4BCBa9140fd4287CB5B",
-      "startBlock": 14679285
-    },
-    "Booster": {
-      "address": "0x59A5ccD34943CD0AdCf5ce703EE9F06889E13707",
-      "startBlock": 14679285
-    },
-    "AuraMerkleDrops": [
-      {
-        "name": "initial",
-        "address": "0x0F0F94441FC40d40eCf65fa6c109533A66CB90c1",
-        "startBlock": 14679285
-      },
-      {
-        "name": "future",
-        "address": "0x76628A0103573DE2B8d18d21f713605Acf2B04A5",
-        "startBlock": 14679285
-      }
-    ]
   }
 }

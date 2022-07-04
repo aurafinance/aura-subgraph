@@ -113,6 +113,19 @@ type PoolAccount @entity {
   """
   staked: BigInt!
 
+  rewards: [PoolAccountRewards!]! @derivedFrom(field: "poolAccount")
+}
+
+type PoolAccountRewards @entity {
+  """
+  {rewardsToken.id}.{poolAccount.id}
+  """
+  id: ID!
+
+  poolAccount: PoolAccount!
+
+  rewardToken: Token!
+
   """
   rewards(account)
   """
@@ -193,6 +206,11 @@ type Pool @entity {
   auraBal initial staking only
   """
   startTime: Int
+
+  """
+  Gauge associated with the pool
+  """
+  gauge: Gauge
 }
 
 type FactoryPoolData @entity {
@@ -367,4 +385,22 @@ type MasterChefUserInfo @entity {
   poolInfo: MasterChefPoolInfo!
 
   masterChef: MasterChef!
+}
+
+type Gauge @entity {
+  """
+  Address
+  """
+  id: ID!
+
+  pool: Pool
+
+  """
+  gauge.balanceOf(auraProxy)
+  """
+  balance: BigInt!
+
+  workingSupply: BigInt!
+
+  totalSupply: BigInt!
 }
