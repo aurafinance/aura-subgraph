@@ -19,8 +19,12 @@ import {
 } from '../../generated/Booster/Booster'
 import { BaseRewardPool as BaseRewardPoolContract } from '../../generated/Booster/BaseRewardPool'
 import { AuraToken } from '../../generated/Booster/AuraToken'
-import { RewardFactory, BaseRewardPool } from '../../generated/templates'
-import { FactoryPoolData, Global, Pool } from '../../generated/schema'
+import {
+  RewardFactory,
+  BaseRewardPool,
+  Gauge as GaugeTemplate,
+} from '../../generated/templates'
+import { FactoryPoolData, Global, Pool, Gauge } from '../../generated/schema'
 
 import { getToken } from '../tokens'
 import { updatePoolRewardData } from '../rewards'
@@ -42,8 +46,12 @@ export function handleDeposited(event: Deposited): void {
 }
 
 export function handleFactoriesUpdated(event: FactoriesUpdated): void {
-  if (event.params.rewardFactory != Address.zero()) {
-    RewardFactory.create(event.params.rewardFactory)
+  let notZero = Address.fromBytes(event.params.rewardFactory).notEqual(
+    Address.zero(),
+  )
+  if (notZero) {
+    let context = new DataSourceContext()
+    RewardFactory.createWithContext(event.params.rewardFactory, context)
   }
 }
 
@@ -73,6 +81,20 @@ export function handlePoolAdded(event: PoolAdded): void {
   factoryPoolData.gauge = event.params.gauge
   factoryPoolData.stash = event.params.stash
   factoryPoolData.save()
+
+  if (event.params.gauge.notEqual(Address.zero())) {
+    let context = new DataSourceContext()
+    context.setString('poolId', pool.id)
+    GaugeTemplate.createWithContext(event.params.gauge, context)
+
+    let gauge = new Gauge(event.params.gauge.toHex())
+    gauge.balance = BigInt.zero()
+    gauge.totalSupply = BigInt.zero()
+    gauge.workingSupply = BigInt.zero()
+    gauge.pool = pool.id
+    gauge.save()
+    pool.gauge = gauge.id
+  }
 
   pool.isFactoryPool = true
   pool.lpToken = getToken(event.params.lpToken).id

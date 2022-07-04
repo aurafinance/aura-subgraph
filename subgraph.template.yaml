@@ -35,6 +35,8 @@ dataSources:
           file: ./abis/ERC20.json
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
+        - name: VirtualBalanceRewardPool
+          file: ./abis/VirtualBalanceRewardPool.json
         - name: AuraStakingProxy
           file: ./abis/AuraStakingProxy.json
         - name: AuraToken
@@ -102,6 +104,8 @@ dataSources:
           file: ./abis/ERC20.json
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
+        - name: VirtualBalanceRewardPool
+          file: ./abis/VirtualBalanceRewardPool.json
         - name: AuraStakingProxy
           file: ./abis/AuraStakingProxy.json
       eventHandlers:
@@ -173,6 +177,10 @@ dataSources:
           file: ./abis/AuraBalRewardPool.json
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
+        - name: VirtualBalanceRewardPool
+          file: ./abis/VirtualBalanceRewardPool.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: Staked(indexed address,uint256)
           handler: handleStaked
@@ -204,6 +212,8 @@ dataSources:
           file: ./abis/ConvexMasterChef.json
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
+        - name: VirtualBalanceRewardPool
+          file: ./abis/VirtualBalanceRewardPool.json
         - name: ERC20
           file: ./abis/ERC20.json
       eventHandlers:
@@ -247,6 +257,16 @@ dataSources:
           handler: handleRootSet
         - event: StartedEarly()
           handler: handleStartedEarly
+        - event: DaoSet(address)
+          handler: handleDaoSet
+        - event: ExpiredWithdrawn(uint256)
+          handler: handleExpiredWithdrawn
+        - event: LockerSet(address)
+          handler: handleLockerSet
+        - event: PenaltyForwarded(uint256)
+          handler: handlePenaltyForwarded
+        - event: Rescued()
+          handler: handleRescued
       file: ./src/mapping/AuraMerkleDrop.ts
   {{/AuraMerkleDrops}}
 
@@ -293,6 +313,10 @@ templates:
       abis:
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
+        - name: VirtualBalanceRewardPool
+          file: ./abis/VirtualBalanceRewardPool.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: Staked(indexed address,uint256)
           handler: handleStaked
@@ -303,3 +327,32 @@ templates:
         - event: RewardPaid(indexed address,uint256)
           handler: handleRewardPaid
       file: ./src/mapping/BaseRewardPool.ts
+
+  - kind: ethereum
+    name: Gauge
+    network: '{{network}}'
+    source:
+      abi: Gauge
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Deposit
+        - Transfer
+        - UpdateLiquidityLimit
+        - Withdraw
+      abis:
+        - name: Gauge
+          file: ./abis/Gauge.json
+      eventHandlers:
+        - event: Deposit(indexed address,uint256)
+          handler: handleDeposit
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: UpdateLiquidityLimit(indexed address,uint256,uint256,uint256,uint256)
+          handler: handleUpdateLiquidityLimit
+        - event: Withdraw(indexed address,uint256)
+          handler: handleWithdraw
+
+      file: ./src/mapping/Gauge.ts

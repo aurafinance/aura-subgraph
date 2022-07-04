@@ -9,6 +9,7 @@ import {
 import { MerkleDrop, MerkleDropClaim } from '../../generated/schema'
 
 import { getAccount } from '../accounts'
+import { PenaltyForwarded, Rescued } from '../../generated/future/AuraMerkleDrop'
 
 function getMerkleDrop(address: Address): MerkleDrop {
   let id = address.toHex()
@@ -52,4 +53,12 @@ export function handleStartedEarly(event: StartedEarly): void {
   let contract = AuraMerkleDrop.bind(event.address)
   merkleDrop.startTime = contract.startTime().toI32()
   merkleDrop.save()
+}
+
+export function handlePenaltyForwarded(event: PenaltyForwarded): void {
+  // do nothing
+}
+
+export function handleRescued(event: Rescued): void {
+  // do nothing
 }

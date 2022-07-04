@@ -16,11 +16,11 @@
     "auth": "graph auth --product hosted-service",
     "deploy:rinkeby": "graph deploy --product hosted-service 0xbutterfield/aura-rinkeby",
     "deploy:kovan": "graph deploy --product hosted-service 0xbutterfield/aura-kovan",
-    "deploy:staging": "graph deploy --product hosted-service 0xbutterfield/aura-staging",
+    "deploy:staging": "graph deploy --product hosted-service aurafinance/aura-staging",
     "deploy:mainnet": "graph deploy --product hosted-service aurafinance/aura",
-    "create-local": "graph create --node http://localhost:8020/ 0xbutterfield/aura-testnet",
-    "remove-local": "graph remove --node http://localhost:8020/ 0xbutterfield/aura-testnet",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 0xbutterfield/aura-testnet"
+    "create-local": "graph create --node http://localhost:8020/ aura/aura-local",
+    "remove-local": "graph remove --node http://localhost:8020/ aura/aura-local",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 aura/aura-local"
   },
   "prettier": {
     "trailingComma": "all",

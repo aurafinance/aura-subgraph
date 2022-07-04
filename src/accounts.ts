@@ -7,9 +7,11 @@ import {
   AuraLockerUserData,
   AuraLockerUserLock,
   Pool,
+  PoolAccountRewards,
 } from '../generated/schema'
 import { AuraLocker } from '../generated/AuraLocker/AuraLocker'
 import { BaseRewardPool } from '../generated/templates/BaseRewardPool/BaseRewardPool'
+import { VirtualBalanceRewardPool } from '../generated/Booster/VirtualBalanceRewardPool'
 import { getToken } from './tokens'
 
 export function getAccount(address: Address): Account {
@@ -37,8 +39,6 @@ export function getPoolAccount(address: Address, pool: Pool): PoolAccount {
     poolAccount.pool = pool.id
     poolAccount.balance = BigInt.zero()
     poolAccount.staked = BigInt.zero()
-    poolAccount.rewards = BigInt.zero()
-    poolAccount.rewardPerTokenPaid = BigInt.zero()
     poolAccount.save()
     return poolAccount as PoolAccount
   }
@@ -50,15 +50,44 @@ export function updatePoolAccountRewards(
   poolAccount: PoolAccount,
   pool: Pool,
 ): void {
-  let rewardPoolContract = BaseRewardPool.bind(
-    Address.fromBytes(pool.rewardPool),
-  )
+  let contract = BaseRewardPool.bind(Address.fromBytes(pool.rewardPool))
 
   let address = Address.fromString(poolAccount.account)
 
-  poolAccount.rewards = rewardPoolContract.rewards(address)
-  poolAccount.rewardPerTokenPaid =
-    rewardPoolContract.userRewardPerTokenPaid(address)
+  {
+    let rewardsToken = getToken(contract.rewardToken())
+    let id = rewardsToken.id + '.' + poolAccount.id
+    let poolAccountRewards = new PoolAccountRewards(id)
+    poolAccountRewards.poolAccount = poolAccount.id
+    poolAccountRewards.rewardToken = rewardsToken.id
+    poolAccountRewards.rewards = contract.rewards(address)
+    poolAccountRewards.rewardPerTokenPaid =
+      contract.userRewardPerTokenPaid(address)
+    poolAccountRewards.save()
+  }
+
+  let extraRewardsLength = contract.try_extraRewardsLength()
+  if (!extraRewardsLength.reverted) {
+    for (let i = 0; i < extraRewardsLength.value.toI32(); i++) {
+      let extraRewardsAddress = contract.extraRewards(BigInt.fromI32(i))
+      if (extraRewardsAddress.notEqual(Address.zero())) {
+        let extraRewardsContract =
+          VirtualBalanceRewardPool.bind(extraRewardsAddress)
+
+        let rewardsToken = getToken(extraRewardsContract.rewardToken())
+
+        // Assuming that rewardsTokens won't be duplicated across rewards/extraRewards for one pool
+        let id = rewardsToken.id + '.' + poolAccount.id
+        let poolAccountRewards = new PoolAccountRewards(id)
+        poolAccountRewards.poolAccount = poolAccount.id
+        poolAccountRewards.rewardToken = rewardsToken.id
+        poolAccountRewards.rewards = extraRewardsContract.rewards(address)
+        poolAccountRewards.rewardPerTokenPaid =
+          extraRewardsContract.userRewardPerTokenPaid(address)
+        poolAccountRewards.save()
+      }
+    }
+  }
 }
 
 export function getAuraLockerAccount(address: Address): AuraLockerAccount {
