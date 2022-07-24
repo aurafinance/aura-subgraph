@@ -35,6 +35,8 @@ dataSources:
           file: ./abis/ERC20.json
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
+        - name: WeightedPool
+          file: ./abis/WeightedPool.json
         - name: VirtualBalanceRewardPool
           file: ./abis/VirtualBalanceRewardPool.json
         - name: AuraStakingProxy
@@ -175,6 +177,8 @@ dataSources:
       abis:
         - name: AuraBalRewardPool
           file: ./abis/AuraBalRewardPool.json
+        - name: WeightedPool
+          file: ./abis/WeightedPool.json
         - name: BaseRewardPool
           file: ./abis/BaseRewardPool.json
         - name: VirtualBalanceRewardPool

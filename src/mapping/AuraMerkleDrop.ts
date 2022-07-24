@@ -9,7 +9,13 @@ import {
 import { MerkleDrop, MerkleDropClaim } from '../../generated/schema'
 
 import { getAccount } from '../accounts'
-import { PenaltyForwarded, Rescued } from '../../generated/future/AuraMerkleDrop'
+import {
+  PenaltyForwarded,
+  Rescued,
+  DaoSet,
+  ExpiredWithdrawn,
+  LockerSet,
+} from '../../generated/initial/AuraMerkleDrop'
 
 function getMerkleDrop(address: Address): MerkleDrop {
   let id = address.toHex()
@@ -60,5 +66,17 @@ export function handlePenaltyForwarded(event: PenaltyForwarded): void {
 }
 
 export function handleRescued(event: Rescued): void {
+  // do nothing
+}
+
+export function handleDaoSet(event: DaoSet): void {
+  // do nothing
+}
+
+export function handleExpiredWithdrawn(event: ExpiredWithdrawn): void {
+  // do nothing
+}
+
+export function handleLockerSet(event: LockerSet): void {
   // do nothing
 }
