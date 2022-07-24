@@ -22,5 +22,8 @@ export function handleRewardPoolCreated(event: RewardPoolCreated): void {
 export function handleTokenRewardPoolCreated(
   event: TokenRewardPoolCreated,
 ): void {
-  // TODO
+  // event.params.rewardPool
+  // event.params.token
+  // event.params.mainRewards
+  // event.params.operator
 }

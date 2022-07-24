@@ -29,6 +29,7 @@ import { FactoryPoolData, Global, Pool, Gauge } from '../../generated/schema'
 import { getToken } from '../tokens'
 import { updatePoolRewardData } from '../rewards'
 import { getPoolAccount } from '../accounts'
+import { WeightedPool } from '../../generated/Booster/WeightedPool'
 
 export function handleArbitratorUpdated(event: ArbitratorUpdated): void {
   // TODO
@@ -77,6 +78,16 @@ export function handlePoolAdded(event: PoolAdded): void {
   let factoryPoolData = new FactoryPoolData(pool.id)
   pool.factoryPoolData = factoryPoolData.id
   factoryPoolData.pool = pool.id
+  factoryPoolData.addedAt = event.block.timestamp.toI32()
+
+  {
+    let balancerPool = WeightedPool.bind(event.params.lpToken)
+    let poolIdResult = balancerPool.try_getPoolId()
+    if (!poolIdResult.reverted) {
+      factoryPoolData.balancerPoolId = poolIdResult.value
+    }
+  }
+
   factoryPoolData.isShutdown = false
   factoryPoolData.gauge = event.params.gauge
   factoryPoolData.stash = event.params.stash

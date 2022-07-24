@@ -219,6 +219,13 @@ type FactoryPoolData @entity {
   """
   id: ID!
 
+  """
+  Timestamp at which the pool was added
+  """
+  addedAt: Int
+
+  balancerPoolId: Bytes
+
   pool: Pool!
 
   gauge: Bytes!
