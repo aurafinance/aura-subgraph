@@ -98,7 +98,13 @@ export function getAuraLockerAccount(address: Address): AuraLockerAccount {
 
   if (auraLockerAccount == null) {
     auraLockerAccount = new AuraLockerAccount(id)
-    auraLockerAccount.account = account.id
+
+    auraLockerAccount.account = id
+
+    // The default value for `delegate` is this entity, which will be valid
+    // once it is saved.
+    auraLockerAccount.delegate = id
+
     auraLockerAccount.balanceNextUnlockIndex = 0
     auraLockerAccount.balanceLocked = BigInt.zero()
     auraLockerAccount.save()

@@ -15,7 +15,7 @@ import {
   AuraLocker as AuraLockerContract,
 } from '../../generated/AuraLocker/AuraLocker'
 import { AuraLocker, AuraLockerRewardData } from '../../generated/schema'
-import { updateAuraLockerAccount } from '../accounts'
+import { getAuraLockerAccount, updateAuraLockerAccount } from '../accounts'
 import { getToken } from '../tokens'
 
 function getLocker(address: Address): AuraLocker {
@@ -68,52 +68,55 @@ function updateAuraLockerRewardData(
 }
 
 export function handleDelegateChanged(event: DelegateChanged): void {
-  let locker = getLocker(event.address)
-  // TODO
+  let lockerAccount = getAuraLockerAccount(event.params.delegator)
+  lockerAccount.delegate = getAuraLockerAccount(event.params.toDelegate).id
+  lockerAccount.save()
+
+  updateAuraLockerAccount(event.params.delegator, event.address)
+
+  if (event.params.fromDelegate.notEqual(event.params.delegator)) {
+    updateAuraLockerAccount(event.params.fromDelegate, event.address)
+  }
+
+  if (event.params.toDelegate.notEqual(event.params.delegator)) {
+    updateAuraLockerAccount(event.params.toDelegate, event.address)
+  }
 }
 
 export function handleDelegateCheckpointed(event: DelegateCheckpointed): void {
-  let locker = getLocker(event.address)
-  // TODO
+  getLocker(event.address)
 }
 
 export function handleKickIncentiveSet(event: KickIncentiveSet): void {
-  let locker = getLocker(event.address)
-  // TODO
+  getLocker(event.address)
 }
 
 export function handleKickReward(event: KickReward): void {
-  let locker = getLocker(event.address)
+  getLocker(event.address)
   updateAuraLockerAccount(event.params._user, event.address)
-  // TODO
 }
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
-  let locker = getLocker(event.address)
-  // TODO
+  getLocker(event.address)
 }
 
 export function handleRecovered(event: Recovered): void {
-  let locker = getLocker(event.address)
-  // TODO
+  getLocker(event.address)
 }
 
 export function handleRewardAdded(event: RewardAdded): void {
   let locker = getLocker(event.address)
   updateAuraLockerRewardData(locker, event.params._token)
-  // TODO
 }
 
 export function handleRewardPaid(event: RewardPaid): void {
   let locker = getLocker(event.address)
   updateAuraLockerRewardData(locker, event.params._rewardsToken)
   updateAuraLockerAccount(event.params._user, event.address)
-  // TODO
 }
 
 export function handleShutdown(event: Shutdown): void {
-  let locker = getLocker(event.address)
-  // TODO
+  getLocker(event.address)
 }
 
 export function handleStaked(event: Staked): void {
@@ -121,7 +124,6 @@ export function handleStaked(event: Staked): void {
   updateAuraLockerAccount(event.params._user, event.address)
   updateLocker(locker)
   locker.save()
-  // TODO
 }
 
 export function handleWithdrawn(event: Withdrawn): void {
@@ -129,5 +131,4 @@ export function handleWithdrawn(event: Withdrawn): void {
   updateAuraLockerAccount(event.params._user, event.address)
   updateLocker(locker)
   locker.save()
-  // TODO
 }
