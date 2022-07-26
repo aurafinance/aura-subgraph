@@ -48,6 +48,16 @@ type AuraLockerAccount @entity {
   balance: BigInt!
 
   """
+  Either self-delegated (in which case delegate => this, or another account)
+  """
+  delegate: AuraLockerAccount!
+
+  """
+  Accounts delegating to this account
+  """
+  delegators: [AuraLockerAccount!]! @derivedFrom(field: "delegate")
+
+  """
   AuraLocker.balances(account)
   """
   balanceLocked: BigInt!
