@@ -9,7 +9,6 @@ The Aura Subgraph tracks:
 * MasterChef
 * Merkle Drops
 
-### Deployments
+## Deployment
 
-* [Kovan](https://thegraph.com/hosted-service/subgraph/0xbutterfield/aura-kovan)
-* [Mainnet]() (soon)
+The Aura Subgraph is deployed on The Graph Network [here](https://thegraph.com/explorer/subgraph?id=BzbmqkatzhxdoqZxbVGgUbFbgHQrsZKN4CWhd8X249pm&view=Overview)
