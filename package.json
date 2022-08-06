@@ -17,7 +17,8 @@
     "deploy:rinkeby": "graph deploy --product hosted-service 0xbutterfield/aura-rinkeby",
     "deploy:kovan": "graph deploy --product hosted-service 0xbutterfield/aura-kovan",
     "deploy:staging": "graph deploy --product hosted-service aurafinance/aura-staging",
-    "deploy:mainnet": "graph deploy --product hosted-service aurafinance/aura",
+    "deploy:mainnet:hosted": "graph deploy --product hosted-service aurafinance/aura",
+    "deploy:mainnet:studio": "graph deploy --node https://api.studio.thegraph.com/deploy/ aura-finance",
     "create-local": "graph create --node http://localhost:8020/ aura/aura-local",
     "remove-local": "graph remove --node http://localhost:8020/ aura/aura-local",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 aura/aura-local"
@@ -28,11 +29,11 @@
     "singleQuote": true
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "^0.28.0",
-    "@graphprotocol/graph-ts": "^0.26.0",
+    "@graphprotocol/graph-cli": "^0.33.0",
+    "@graphprotocol/graph-ts": "^0.27.0",
     "get-graphql-schema": "^2.1.2",
-    "globby": "^13.1.1",
+    "globby": "^13.1.2",
     "mustache": "^4.2.0",
-    "prettier": "^2.6.0"
+    "prettier": "^2.7.1"
   }
 }

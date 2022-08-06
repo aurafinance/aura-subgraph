@@ -1,15 +1,13 @@
 import { Address } from '@graphprotocol/graph-ts'
 
+import { MerkleDrop, MerkleDropClaim } from '../../generated/schema'
+
+import { getAccount } from '../accounts'
 import {
   Claimed,
   RootSet,
   StartedEarly,
   AuraMerkleDrop,
-} from '../../generated/BalancerMerkleDrop/AuraMerkleDrop'
-import { MerkleDrop, MerkleDropClaim } from '../../generated/schema'
-
-import { getAccount } from '../accounts'
-import {
   PenaltyForwarded,
   Rescued,
   DaoSet,
