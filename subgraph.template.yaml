@@ -158,6 +158,7 @@ dataSources:
           handler: handleTransfer
       file: ./src/mapping/AuraToken.ts
 
+  {{#AuraBalRewardPool}}
   - kind: ethereum
     name: AuraBalRewardPool
     network: '{{network}}'
@@ -195,6 +196,7 @@ dataSources:
         - event: RewardPaid(indexed address,uint256,bool)
           handler: handleRewardPaid
       file: ./src/mapping/AuraBalRewardPool.ts
+  {{/AuraBalRewardPool}}
 
   - kind: ethereum
     name: ConvexMasterChef
