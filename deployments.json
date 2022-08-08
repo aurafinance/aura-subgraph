@@ -73,19 +73,19 @@
     "network": "goerli",
     "AuraLocker": {
       "address": "0x1e5B33222977642Bf64EC80846BBF83A016727A0",
-      "startBlock": 7310931
+      "startBlock": 7185592
     },
     "AuraToken": {
       "address": "0xFf3653ee692F541efB7c2214D72FE05A7A6EC01f",
-      "startBlock": 7310931
+      "startBlock": 7185592
     },
     "Booster": {
       "address": "0x2ad214dA65effA92159057957E50994440E99A1b",
-      "startBlock": 7310931
+      "startBlock": 7185592
     },
     "ConvexMasterChef": {
       "address": "0xa3fCaFCa8150636C3B736A16Cd73d49cC8A7E10E",
-      "startBlock": 7310931
+      "startBlock": 7185592
     },
     "AuraMerkleDrops": []
   }
