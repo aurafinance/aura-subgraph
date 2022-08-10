@@ -70,6 +70,7 @@ function updateAuraLockerRewardData(
 export function handleDelegateChanged(event: DelegateChanged): void {
   let lockerAccount = getAuraLockerAccount(event.params.delegator)
   lockerAccount.delegate = getAuraLockerAccount(event.params.toDelegate).id
+  lockerAccount.delegateUpdatedAt = event.block.timestamp.toI32()
   lockerAccount.save()
 
   updateAuraLockerAccount(event.params.delegator, event.address)
