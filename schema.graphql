@@ -48,9 +48,9 @@ type AuraLockerAccount @entity {
   balance: BigInt!
 
   """
-  Either self-delegated (in which case delegate => this, or another account)
+  Either self-delegated (in which case delegate => this, or another account); or not set
   """
-  delegate: AuraLockerAccount!
+  delegate: AuraLockerAccount
 
   """
   Accounts delegating to this account
