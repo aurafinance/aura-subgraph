@@ -53,6 +53,11 @@ type AuraLockerAccount @entity {
   delegate: AuraLockerAccount
 
   """
+  Timestamp at which `delegate` was updated
+  """
+  delegateUpdatedAt: Int
+
+  """
   Accounts delegating to this account
   """
   delegators: [AuraLockerAccount!]! @derivedFrom(field: "delegate")
