@@ -73,6 +73,8 @@ type AuraLockerAccount @entity {
   """
   userLocks: [AuraLockerUserLock!]! @derivedFrom(field: "auraLockerAccount")
 
+  userLocksLength: Int!
+
   """
   AuraLocker.userData(account)
   """
