@@ -133,7 +133,8 @@ export function updateAuraLockerAccount(
   let lockedBalancesResult = contract.lockedBalances(address)
   for (let i = 0; i < lockedBalancesResult.value3.length; i++) {
     let lockedBalance = lockedBalancesResult.value3[i]
-    let userLockId = auraLockerAccount.id + '.' + i.toString()
+    let userLockId =
+      auraLockerAccount.id + '.' + lockedBalance.unlockTime.toString()
     let userLock = AuraLockerUserLock.load(userLockId)
     if (userLock == null) {
       userLock = new AuraLockerUserLock(userLockId)
