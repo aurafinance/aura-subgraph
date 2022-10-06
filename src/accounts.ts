@@ -134,21 +134,31 @@ export function updateAuraLockerAccount(
     store.remove('AuraLockerUserLock', userLockId)
   }
 
-  let lockedBalancesResult = contract.lockedBalances(address)
-  for (let i = 0; i < lockedBalancesResult.value3.length; i++) {
-    let lockedBalance = lockedBalancesResult.value3[i]
+  // Iterate through userLocks (the function is called with an index)
+  let userLocksLength = 0
+  for (let i = 0; i < 255; i++) {
+    let userLocksCall = contract.try_userLocks(address, BigInt.fromI32(i))
+
+    if (userLocksCall.reverted) {
+      userLocksLength = i
+      break
+    }
+
+    let amount = userLocksCall.value.getAmount()
+    let unlockTime = userLocksCall.value.getUnlockTime()
+
     let userLockId = auraLockerAccount.id + '.' + i.toString()
     let userLock = AuraLockerUserLock.load(userLockId)
     if (userLock == null) {
       userLock = new AuraLockerUserLock(userLockId)
       userLock.auraLockerAccount = auraLockerAccount.id
     }
-    userLock.amount = lockedBalance.amount
-    userLock.unlockTime = lockedBalance.unlockTime.toI32()
+    userLock.amount = amount
+    userLock.unlockTime = unlockTime.toI32()
     userLock.save()
   }
 
-  auraLockerAccount.userLocksLength = lockedBalancesResult.value3.length
+  auraLockerAccount.userLocksLength = userLocksLength
   auraLockerAccount.save()
 
   for (let i = 0; i < 255; i++) {
