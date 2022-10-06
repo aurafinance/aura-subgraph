@@ -1,4 +1,4 @@
-import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt, store } from '@graphprotocol/graph-ts'
 
 import {
   Account,
@@ -103,6 +103,7 @@ export function getAuraLockerAccount(address: Address): AuraLockerAccount {
     auraLockerAccount.auraLocker = 'auraLocker'
     auraLockerAccount.balanceNextUnlockIndex = 0
     auraLockerAccount.balance = BigInt.zero()
+    auraLockerAccount.userLocksLength = 0
     auraLockerAccount.balanceLocked = BigInt.zero()
     auraLockerAccount.save()
     return auraLockerAccount as AuraLockerAccount
@@ -125,21 +126,39 @@ export function updateAuraLockerAccount(
   auraLockerAccount.balanceLocked = balancesResult.value0
   auraLockerAccount.balanceNextUnlockIndex = balancesResult.value1.toI32()
 
-  let lockedBalancesResult = contract.lockedBalances(address)
-  for (let i = 0; i < lockedBalancesResult.value3.length; i++) {
-    let lockedBalance = lockedBalancesResult.value3[i]
-    let userLockId =
-      auraLockerAccount.id + '.' + lockedBalance.unlockTime.toString()
+  // Remove all previous locks for this account, then save the current state.
+  // Given that the array can be shorter after re-locking, this ensures that
+  // there will be no stale user locks after the update.
+  for (let i = 0; i < auraLockerAccount.userLocksLength; i++) {
+    let userLockId = auraLockerAccount.id + '.' + i.toString()
+    store.remove('AuraLockerUserLock', userLockId)
+  }
+
+  // Iterate through userLocks (the function is called with an index)
+  let userLocksLength = 0
+  for (let i = 0; i < 255; i++) {
+    let userLocksCall = contract.try_userLocks(address, BigInt.fromI32(i))
+
+    if (userLocksCall.reverted) {
+      userLocksLength = i
+      break
+    }
+
+    let amount = userLocksCall.value.getAmount()
+    let unlockTime = userLocksCall.value.getUnlockTime()
+
+    let userLockId = auraLockerAccount.id + '.' + i.toString()
     let userLock = AuraLockerUserLock.load(userLockId)
     if (userLock == null) {
       userLock = new AuraLockerUserLock(userLockId)
       userLock.auraLockerAccount = auraLockerAccount.id
     }
-    userLock.amount = lockedBalance.amount
-    userLock.unlockTime = lockedBalance.unlockTime.toI32()
+    userLock.amount = amount
+    userLock.unlockTime = unlockTime.toI32()
     userLock.save()
   }
 
+  auraLockerAccount.userLocksLength = userLocksLength
   auraLockerAccount.save()
 
   for (let i = 0; i < 255; i++) {
